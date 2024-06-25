@@ -21,7 +21,7 @@ extension WriteDefinition on GenerationContext {
       case TableValuedFunction():
         resultSet.writeInto(this);
 
-        if (resultSet.aliasedName != resultSet.entityName) {
+        if (resultSet.aliasedName != resultSet.entityColName) {
           buffer.write(' ${resultSet.aliasedName}');
         }
       default:

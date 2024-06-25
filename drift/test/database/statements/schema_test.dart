@@ -114,17 +114,13 @@ void main() {
       test('sqlite3', () async {
         await db.createMigrator().createTable(db.withCustomType);
 
-        verify(mockExecutor.runCustom(
-            'CREATE TABLE IF NOT EXISTS "with_custom_type" ("id" text NOT NULL);',
-            []));
+        verify(mockExecutor.runCustom('CREATE TABLE IF NOT EXISTS "with_custom_type" ("id" text NOT NULL);', []));
       });
 
       test('postgres', () async {
         when(mockExecutor.dialect).thenReturn(SqlDialect.postgres);
         await db.createMigrator().createTable(db.withCustomType);
-        verify(mockExecutor.runCustom(
-            'CREATE TABLE IF NOT EXISTS "with_custom_type" ("id" uuid NOT NULL);',
-            []));
+        verify(mockExecutor.runCustom('CREATE TABLE IF NOT EXISTS "with_custom_type" ("id" uuid NOT NULL);', []));
       });
     });
 
@@ -173,12 +169,9 @@ void main() {
     });
 
     test('renames columns', () async {
-      await db
-          .createMigrator()
-          .renameColumn(db.users, 'my name', db.users.name);
+      await db.createMigrator().renameColumn(db.users, 'my name', db.users.name);
 
-      verify(mockExecutor
-          .runCustom('ALTER TABLE "users" RENAME COLUMN "my name" TO "name";'));
+      verify(mockExecutor.runCustom('ALTER TABLE "users" RENAME COLUMN "my name" TO "name";'));
     });
   });
 
@@ -252,8 +245,7 @@ void main() {
       await defaultMigrator.createAll();
       verifyNever(executor.runCustom(any));
 
-      final fixedMigrator =
-          Migrator(db, _FakeSchemaVersion(database: db, version: 2));
+      final fixedMigrator = Migrator(db, _FakeSchemaVersion(database: db, version: 2));
       await fixedMigrator.createAll();
       verify(executor.runCustom(
         'CREATE TABLE IF NOT EXISTS "my_table" ("foo" INTEGER NOT NULL);',
@@ -270,8 +262,7 @@ void main() {
       await defaultMigrator.recreateAllViews();
       verifyNever(executor.runCustom(any));
 
-      final fixedMigrator =
-          Migrator(db, _FakeSchemaVersion(database: db, version: 2));
+      final fixedMigrator = Migrator(db, _FakeSchemaVersion(database: db, version: 2));
       await fixedMigrator.recreateAllViews();
 
       verify(executor.runCustom(
@@ -314,18 +305,17 @@ final class _FakeSchemaVersion extends VersionedSchema {
   @override
   Iterable<DatabaseSchemaEntity> get entities => [
         VersionedTable(
-          entityName: 'my_table',
+          entityColName: 'my_table',
           attachedDatabase: database,
           columns: [
-            (name) => GeneratedColumn<int>('foo', name, false,
-                type: DriftSqlType.int),
+            (name) => GeneratedColumn<int>('foo', name, false, type: DriftSqlType.int),
           ],
           tableConstraints: [],
           isStrict: false,
           withoutRowId: false,
         ),
         VersionedView(
-          entityName: 'my_view',
+          entityColName: 'my_view',
           attachedDatabase: database,
           createViewStmt: 'CREATE VIEW my_view AS SELECT $version',
           columns: [],

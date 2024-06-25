@@ -67,13 +67,11 @@ class InsertStatement<T extends Table, D> {
     InsertMode? mode,
     UpsertClause<T, D>? onConflict,
   }) async {
-    final ctx = createContext(entity, mode ?? InsertMode.insert,
-        onConflict: onConflict);
+    final ctx = createContext(entity, mode ?? InsertMode.insert, onConflict: onConflict);
 
     return await database.withCurrentExecutor((e) async {
       final id = await e.runInsert(ctx.sql, ctx.boundVariables);
-      database
-          .notifyUpdates({TableUpdate.onTable(table, kind: UpdateKind.insert)});
+      database.notifyUpdates({TableUpdate.onTable(table, kind: UpdateKind.insert)});
       return id;
     });
   }
@@ -126,15 +124,13 @@ class InsertStatement<T extends Table, D> {
       ..write(' INTO ${ctx.identifier(table.aliasedName)} (')
       ..write(columnNameToSelectColumnName.keys.map(ctx.identifier).join(', '))
       ..write(') SELECT ')
-      ..write(
-          columnNameToSelectColumnName.values.map(ctx.identifier).join(', '))
+      ..write(columnNameToSelectColumnName.values.map(ctx.identifier).join(', '))
       ..write(' FROM $sourceCte');
     _writeOnConflict(ctx, mode, null, onConflict);
 
     return await database.withCurrentExecutor((e) async {
       await e.runInsert(ctx.sql, ctx.boundVariables);
-      database
-          .notifyUpdates({TableUpdate.onTable(table, kind: UpdateKind.insert)});
+      database.notifyUpdates({TableUpdate.onTable(table, kind: UpdateKind.insert)});
     });
   }
 
@@ -146,10 +142,8 @@ class InsertStatement<T extends Table, D> {
   /// exception in that case. Use [insertReturningOrNull] when performing an
   /// insert with an insert mode like [InsertMode.insertOrIgnore] or when using
   /// a [DoUpdate] with a `where` clause clause.
-  Future<D> insertReturning(Insertable<D> entity,
-      {InsertMode? mode, UpsertClause<T, D>? onConflict}) async {
-    final row =
-        await insertReturningOrNull(entity, mode: mode, onConflict: onConflict);
+  Future<D> insertReturning(Insertable<D> entity, {InsertMode? mode, UpsertClause<T, D>? onConflict}) async {
+    final row = await insertReturningOrNull(entity, mode: mode, onConflict: onConflict);
 
     if (row == null) {
       throw StateError('The insert statement did not insert any rows that '
@@ -165,16 +159,13 @@ class InsertStatement<T extends Table, D> {
   /// When no row was inserted and no exception was thrown, for instance because
   /// [InsertMode.insertOrIgnore] was used or because the upsert clause had a
   /// `where` clause that didn't match, `null` is returned instead.
-  Future<D?> insertReturningOrNull(Insertable<D> entity,
-      {InsertMode? mode, UpsertClause<T, D>? onConflict}) async {
-    final ctx = createContext(entity, mode ?? InsertMode.insert,
-        onConflict: onConflict, returning: true);
+  Future<D?> insertReturningOrNull(Insertable<D> entity, {InsertMode? mode, UpsertClause<T, D>? onConflict}) async {
+    final ctx = createContext(entity, mode ?? InsertMode.insert, onConflict: onConflict, returning: true);
 
     return database.withCurrentExecutor((e) async {
       final result = await e.runSelect(ctx.sql, ctx.boundVariables);
       if (result.isNotEmpty) {
-        database.notifyUpdates(
-            {TableUpdate.onTable(table, kind: UpdateKind.insert)});
+        database.notifyUpdates({TableUpdate.onTable(table, kind: UpdateKind.insert)});
         return table.map(result.single);
       } else {
         return null;
@@ -205,8 +196,7 @@ class InsertStatement<T extends Table, D> {
   /// insert statement fro the [entry] with the [mode].
   ///
   /// This method is used internally by drift. Consider using [insert] instead.
-  GenerationContext createContext(Insertable<D> entry, InsertMode mode,
-      {UpsertClause<T, D>? onConflict, bool returning = false}) {
+  GenerationContext createContext(Insertable<D> entry, InsertMode mode, {UpsertClause<T, D>? onConflict, bool returning = false}) {
     _validateIntegrity(entry);
 
     final rawValues = entry.toColumns(true);
@@ -271,8 +261,7 @@ class InsertStatement<T extends Table, D> {
     Insertable<D>? originalEntry,
     UpsertClause<T, D>? onConflict,
   ) {
-    void writeOnConflictConstraint(
-        List<Column<Object>>? target, Expression<bool>? where) {
+    void writeOnConflictConstraint(List<Column<Object>>? target, Expression<bool>? where) {
       if (ctx.dialect == SqlDialect.mariadb) {
         ctx.buffer.write(' ON DUPLICATE');
       } else {
@@ -288,8 +277,7 @@ class InsertStatement<T extends Table, D> {
         final conflictTarget = target ?? table.$primaryKey.toList();
 
         if (conflictTarget.isEmpty) {
-          throw ArgumentError(
-              'Table has no primary key, so a conflict target is needed.');
+          throw ArgumentError('Table has no primary key, so a conflict target is needed.');
         }
 
         var first = true;
@@ -322,18 +310,14 @@ class InsertStatement<T extends Table, D> {
         // valid for updates.
         // the identical check is a performance optimization - for the most
         // common call (insertOnConflictUpdate) we don't have to check twice.
-        table
-            .validateIntegrity(upsertInsertable, isInserting: false)
-            .throwIfInvalid(upsertInsertable);
+        table.validateIntegrity(upsertInsertable, isInserting: false).throwIfInvalid(upsertInsertable);
       }
 
       final updateSet = upsertInsertable.toColumns(true);
 
-      writeOnConflictConstraint(onConflict.target,
-          onConflict._targetCondition?.call(table.asDslTable));
+      writeOnConflictConstraint(onConflict.target, onConflict._targetCondition?.call(table.asDslTable));
 
-      if (ctx.dialect == SqlDialect.postgres &&
-          mode == InsertMode.insertOrIgnore) {
+      if (ctx.dialect == SqlDialect.postgres && mode == InsertMode.insertOrIgnore) {
         ctx.buffer.write(' DO NOTHING ');
       } else {
         if (ctx.dialect == SqlDialect.mariadb) {
@@ -355,8 +339,7 @@ class InsertStatement<T extends Table, D> {
 
         if (onConflict._where != null) {
           ctx.writeWhitespace();
-          final where = onConflict._where(
-              table.asDslTable, table.createAlias('excluded').asDslTable);
+          final where = onConflict._where(table.asDslTable, table.createAlias('excluded').asDslTable);
           where.writeInto(ctx);
         }
       }
@@ -372,8 +355,7 @@ class InsertStatement<T extends Table, D> {
 
   void _validateIntegrity(Insertable<D>? d) {
     if (d == null) {
-      throw InvalidDataException(
-          'Cannot write null row into ${table.entityName}');
+      throw InvalidDataException('Cannot write null row into ${table.entityColName}');
     }
 
     table.validateIntegrity(d, isInserting: true).throwIfInvalid(d);
@@ -438,14 +420,11 @@ enum InsertMode implements Component {
 
   @override
   void writeInto(GenerationContext ctx) {
-    if (ctx.dialect == SqlDialect.postgres &&
-        this != InsertMode.insert &&
-        this != InsertMode.insertOrIgnore) {
+    if (ctx.dialect == SqlDialect.postgres && this != InsertMode.insert && this != InsertMode.insertOrIgnore) {
       throw ArgumentError('$this not supported on postgres');
     }
 
-    ctx.buffer.write(_insertKeywords[
-        ctx.dialect == SqlDialect.postgres ? InsertMode.insert : this]);
+    ctx.buffer.write(_insertKeywords[ctx.dialect == SqlDialect.postgres ? InsertMode.insert : this]);
   }
 }
 
@@ -543,9 +522,7 @@ class DoUpdate<T extends Table, D> extends UpsertClause<T, D> {
   })  : _creator = update,
         _usesExcludedTable = true,
         _targetCondition = targetCondition,
-        _where = where == null
-            ? null
-            : ((old, excluded) => Where(where(old, excluded)));
+        _where = where == null ? null : ((old, excluded) => Where(where(old, excluded)));
 
   Insertable<D> _createInsertable(TableInfo<T, D> table) {
     return _creator(table.asDslTable, table.createAlias('excluded').asDslTable);

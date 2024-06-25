@@ -127,7 +127,7 @@ abstract base class VersionedSchema {
 /// tables.
 class VersionedTable extends Table with TableInfo<Table, QueryRow> {
   @override
-  final String entityName;
+  final String entityColName;
   final String? _alias;
   @override
   final bool isStrict;
@@ -153,7 +153,7 @@ class VersionedTable extends Table with TableInfo<Table, QueryRow> {
   /// [columns] is a list of functions returning a [GeneratedColumn] when given
   /// the alias (or original name) of this table.
   VersionedTable({
-    required this.entityName,
+    required this.entityColName,
     required this.isStrict,
     required this.withoutRowId,
     required this.attachedDatabase,
@@ -162,30 +162,27 @@ class VersionedTable extends Table with TableInfo<Table, QueryRow> {
     String? alias,
   })  : _columnFactories = columns,
         customConstraints = tableConstraints,
-        $columns = [for (final column in columns) column(alias ?? entityName)],
+        $columns = [for (final column in columns) column(alias ?? entityColName)],
         _alias = alias;
 
   /// Create a table by copying fields from [source] and applying an [alias].
   VersionedTable.aliased({
     required VersionedTable source,
     required String? alias,
-  })  : entityName = source.entityName,
+  })  : entityColName = source.entityColName,
         isStrict = source.isStrict,
         withoutRowId = source.withoutRowId,
         attachedDatabase = source.attachedDatabase,
         customConstraints = source.customConstraints,
         _columnFactories = source._columnFactories,
-        $columns = [
-          for (final column in source._columnFactories)
-            column(alias ?? source.entityName)
-        ],
+        $columns = [for (final column in source._columnFactories) column(alias ?? source.entityColName)],
         _alias = alias;
 
   @override
-  String get actualTableName => entityName;
+  String get actualTableName => entityColName;
 
   @override
-  String get aliasedName => _alias ?? entityName;
+  String get aliasedName => _alias ?? entityColName;
 
   @override
   bool get dontWriteConstraints => true;
@@ -202,14 +199,13 @@ class VersionedTable extends Table with TableInfo<Table, QueryRow> {
 }
 
 /// The version of [VersionedTable] for virtual tables.
-class VersionedVirtualTable extends VersionedTable
-    with VirtualTableInfo<Table, QueryRow> {
+class VersionedVirtualTable extends VersionedTable with VirtualTableInfo<Table, QueryRow> {
   @override
   final String moduleAndArgs;
 
   /// Create a small virtual table from the individual fields.
   VersionedVirtualTable({
-    required super.entityName,
+    required super.entityColName,
     required super.attachedDatabase,
     required super.columns,
     required this.moduleAndArgs,
@@ -222,8 +218,7 @@ class VersionedVirtualTable extends VersionedTable
 
   /// Create a virtual table by copying fields from [source] and applying a
   /// [alias] to columns.
-  VersionedVirtualTable.aliased(
-      {required VersionedVirtualTable super.source, required super.alias})
+  VersionedVirtualTable.aliased({required VersionedVirtualTable super.source, required super.alias})
       : moduleAndArgs = source.moduleAndArgs,
         super.aliased();
 
@@ -240,15 +235,14 @@ class VersionedVirtualTable extends VersionedTable
 /// dedicated class.
 class VersionedView implements ViewInfo<HasResultSet, QueryRow>, HasResultSet {
   @override
-  final String entityName;
+  final String entityColName;
   final String? _alias;
 
   @override
   final String createViewStmt;
 
   @override
-  Map<SqlDialect, String>? get createViewStatements =>
-      {SqlDialect.sqlite: createViewStmt};
+  Map<SqlDialect, String>? get createViewStatements => {SqlDialect.sqlite: createViewStmt};
 
   @override
   final List<GeneratedColumn> $columns;
@@ -267,29 +261,26 @@ class VersionedView implements ViewInfo<HasResultSet, QueryRow>, HasResultSet {
 
   /// Create a view from the individual fields on [ViewInfo].
   VersionedView({
-    required this.entityName,
+    required this.entityColName,
     required this.attachedDatabase,
     required this.createViewStmt,
     required List<GeneratedColumn Function(String)> columns,
     String? alias,
   })  : _columnFactories = columns,
-        $columns = [for (final column in columns) column(alias ?? entityName)],
+        $columns = [for (final column in columns) column(alias ?? entityColName)],
         _alias = alias;
 
   /// Copy an alias to a [source] view.
   VersionedView.aliased({required VersionedView source, required String? alias})
-      : entityName = source.entityName,
+      : entityColName = source.entityColName,
         attachedDatabase = source.attachedDatabase,
         createViewStmt = source.createViewStmt,
         _columnFactories = source._columnFactories,
-        $columns = [
-          for (final column in source._columnFactories)
-            column(alias ?? source.entityName)
-        ],
+        $columns = [for (final column in source._columnFactories) column(alias ?? source.entityColName)],
         _alias = alias;
 
   @override
-  String get aliasedName => _alias ?? entityName;
+  String get aliasedName => _alias ?? entityColName;
 
   @override
   HasResultSet get asDslTable => this;

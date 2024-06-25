@@ -149,8 +149,7 @@ Expression<String> jsonGroupArray(
   OrderBy? orderBy,
   Expression<bool>? filter,
 }) {
-  return AggregateFunctionExpression('json_group_array', [value],
-      orderBy: orderBy, filter: filter);
+  return AggregateFunctionExpression('json_group_array', [value], orderBy: orderBy, filter: filter);
 }
 
 /// Returns a binary representation of a JSON array containing the result of
@@ -163,8 +162,7 @@ Expression<Uint8List> jsonbGroupArray(
   OrderBy? orderBy,
   Expression<bool>? filter,
 }) {
-  return AggregateFunctionExpression('jsonb_group_array', [value],
-      orderBy: orderBy, filter: filter);
+  return AggregateFunctionExpression('jsonb_group_array', [value], orderBy: orderBy, filter: filter);
 }
 
 List<Expression> _groupObjectArgs(Map<Expression<String>, Expression> values) {
@@ -232,8 +230,7 @@ Expression<String> jsonGroupObject(Map<Expression<String>, Expression> values) {
 ///
 /// See [jsonGroupObject], the variant of this function returning a textual
 /// description, for more details and an example.
-Expression<Uint8List> jsonbGroupObject(
-    Map<Expression<String>, Expression> values) {
+Expression<Uint8List> jsonbGroupObject(Map<Expression<String>, Expression> values) {
   return FunctionCallExpression('jsonb_group_object', _groupObjectArgs(values));
 }
 
@@ -302,22 +299,14 @@ final class JsonTableFunction extends TableValuedFunction<JsonTableFunction> {
     super.alias,
   }) : super(
           columns: [
-            GeneratedColumn<DriftAny>('key', alias ?? functionName, true,
-                type: DriftSqlType.any),
-            GeneratedColumn<DriftAny>('value', alias ?? functionName, true,
-                type: DriftSqlType.any),
-            GeneratedColumn<String>('type', alias ?? functionName, true,
-                type: DriftSqlType.string),
-            GeneratedColumn<DriftAny>('atom', alias ?? functionName, true,
-                type: DriftSqlType.any),
-            GeneratedColumn<int>('id', alias ?? functionName, true,
-                type: DriftSqlType.int),
-            GeneratedColumn<int>('parent', alias ?? functionName, true,
-                type: DriftSqlType.int),
-            GeneratedColumn<String>('fullkey', alias ?? functionName, true,
-                type: DriftSqlType.string),
-            GeneratedColumn<String>('path', alias ?? functionName, true,
-                type: DriftSqlType.string),
+            GeneratedColumn<DriftAny>('key', alias ?? functionName, true, type: DriftSqlType.any),
+            GeneratedColumn<DriftAny>('value', alias ?? functionName, true, type: DriftSqlType.any),
+            GeneratedColumn<String>('type', alias ?? functionName, true, type: DriftSqlType.string),
+            GeneratedColumn<DriftAny>('atom', alias ?? functionName, true, type: DriftSqlType.any),
+            GeneratedColumn<int>('id', alias ?? functionName, true, type: DriftSqlType.int),
+            GeneratedColumn<int>('parent', alias ?? functionName, true, type: DriftSqlType.int),
+            GeneratedColumn<String>('fullkey', alias ?? functionName, true, type: DriftSqlType.string),
+            GeneratedColumn<String>('path', alias ?? functionName, true, type: DriftSqlType.string),
           ],
         );
 
@@ -361,11 +350,10 @@ final class JsonTableFunction extends TableValuedFunction<JsonTableFunction> {
   Expression<String> get path => _col('path');
 
   @override
-  ResultSetImplementation<JsonTableFunction, TypedResult> createAlias(
-      String alias) {
+  ResultSetImplementation<JsonTableFunction, TypedResult> createAlias(String alias) {
     return JsonTableFunction._(
       attachedDatabase,
-      functionName: entityName,
+      functionName: entityColName,
       arguments: arguments,
       alias: alias,
     );

@@ -22,9 +22,7 @@ import '../query_builder.dart';
 /// `JsonTableFunction` in `package:drift/json1.dart`. It makes the `json_each`
 /// and `json_tree` table-valued functions available to drift.
 @experimental
-abstract base class TableValuedFunction<Self extends ResultSetImplementation>
-    extends ResultSetImplementation<Self, TypedResult>
-    implements HasResultSet, Component {
+abstract base class TableValuedFunction<Self extends ResultSetImplementation> extends ResultSetImplementation<Self, TypedResult> implements HasResultSet, Component {
   final String _functionName;
 
   /// The arguments passed to the table-valued function.
@@ -63,7 +61,7 @@ abstract base class TableValuedFunction<Self extends ResultSetImplementation>
   };
 
   @override
-  String get entityName => _functionName;
+  String get entityColName => _functionName;
 
   @override
   FutureOr<TypedResult> map(Map<String, dynamic> data, {String? tablePrefix}) {
@@ -72,9 +70,7 @@ abstract base class TableValuedFunction<Self extends ResultSetImplementation>
       const {},
       row,
       {
-        for (final column in $columns)
-          column: attachedDatabase.typeMapping
-              .read(column.type, row.data[column.name]),
+        for (final column in $columns) column: attachedDatabase.typeMapping.read(column.type, row.data[column.name]),
       },
     );
   }

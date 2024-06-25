@@ -41,17 +41,16 @@ part of '../query_builder.dart';
 ///
 /// See also: [subqueryExpression], for subqueries which only return one row and
 /// one column.
-class Subquery<Row> extends ResultSetImplementation<Subquery, Row>
-    implements HasResultSet {
+class Subquery<Row> extends ResultSetImplementation<Subquery, Row> implements HasResultSet {
   /// The inner [select] statement of this subquery.
   final BaseSelectStatement<Row> select;
   @override
-  final String entityName;
+  final String entityColName;
 
   /// Creates a subqery from the inner [select] statement forming the base of
   /// the subquery and a unique name of this subquery in the statement being
   /// executed.
-  Subquery(this.select, this.entityName);
+  Subquery(this.select, this.entityColName);
 
   /// Makes a column from the subquery available to the outer select statement.
   ///
@@ -90,8 +89,7 @@ class Subquery<Row> extends ResultSetImplementation<Subquery, Row>
   Expression<T> ref<T extends Object>(Expression<T> inner) {
     final name = select._nameForColumn(inner);
     if (name == null) {
-      throw ArgumentError(
-          'The source select statement does not contain that column');
+      throw ArgumentError('The source select statement does not contain that column');
     }
 
     return columnsByName[name]!.dartCast();
@@ -102,7 +100,7 @@ class Subquery<Row> extends ResultSetImplementation<Subquery, Row>
     for (final (expr, name) in select._expandedColumns)
       GeneratedColumn(
         name,
-        entityName,
+        entityColName,
         true,
         type: expr.driftSqlType,
       ),

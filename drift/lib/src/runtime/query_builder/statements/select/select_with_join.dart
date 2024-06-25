@@ -4,16 +4,10 @@ part of '../../query_builder.dart';
 // this is called JoinedSelectStatement for legacy reasons - we also use it
 // when custom expressions are used as result columns. Basically, it stores
 // queries that are more complex than SimpleSelectStatement
-class JoinedSelectStatement<FirstT extends HasResultSet, FirstD>
-    extends Query<FirstT, FirstD>
-    with LimitContainerMixin, Selectable<TypedResult>
-    implements BaseSelectStatement {
+class JoinedSelectStatement<FirstT extends HasResultSet, FirstD> extends Query<FirstT, FirstD> with LimitContainerMixin, Selectable<TypedResult> implements BaseSelectStatement {
   /// Used internally by drift, users should use [SimpleSelectStatement.join]
   /// instead.
-  JoinedSelectStatement(super.database, super.table, this._joins,
-      [this.distinct = false,
-      this._includeMainTableInResult = true,
-      this._includeJoinedTablesInResult = true]);
+  JoinedSelectStatement(super.database, super.table, this._joins, [this.distinct = false, this._includeMainTableInResult = true, this._includeJoinedTablesInResult = true]);
 
   /// Whether to generate a `SELECT DISTINCT` query that will remove duplicate
   /// rows from the result set.
@@ -42,26 +36,18 @@ class JoinedSelectStatement<FirstT extends HasResultSet, FirstD>
   Set<ResultSetImplementation> get watchedTables => _queriedTables().toSet();
 
   @override
-  Iterable<(Expression<Object>, String)> get _expandedColumns =>
-      _columnsWithName(null);
+  Iterable<(Expression<Object>, String)> get _expandedColumns => _columnsWithName(null);
 
-  Iterable<(Expression<Object>, String)> _columnsWithName(
-      String? generatingForView) sync* {
+  Iterable<(Expression<Object>, String)> _columnsWithName(String? generatingForView) sync* {
     for (final table in _queriedTables(true)) {
       for (final column in table.$columns) {
-        yield (
-          column,
-          _nameForTableColumn(column, generatingForView: generatingForView)
-        );
+        yield (column, _nameForTableColumn(column, generatingForView: generatingForView));
       }
     }
 
     for (final column in _selectedColumns) {
       if (column is GeneratedColumn) {
-        yield (
-          column,
-          _nameForTableColumn(column, generatingForView: generatingForView)
-        );
+        yield (column, _nameForTableColumn(column, generatingForView: generatingForView));
       } else {
         yield (column, _columnAliases[column]!);
       }
@@ -88,8 +74,7 @@ class JoinedSelectStatement<FirstT extends HasResultSet, FirstD>
     return null;
   }
 
-  String _nameForTableColumn(GeneratedColumn column,
-      {String? generatingForView}) {
+  String _nameForTableColumn(GeneratedColumn column, {String? generatingForView}) {
     if (generatingForView == column.tableName) {
       return column.$name;
     } else {
@@ -101,15 +86,13 @@ class JoinedSelectStatement<FirstT extends HasResultSet, FirstD>
   ///
   /// If [onlyResults] (defaults to false) is set, only tables that are included
   /// in the result set are returned.
-  Iterable<ResultSetImplementation> _queriedTables(
-      [bool onlyResults = false]) sync* {
+  Iterable<ResultSetImplementation> _queriedTables([bool onlyResults = false]) sync* {
     if (!onlyResults || _includeMainTableInResult) {
       yield table;
     }
 
     for (final join in _joins) {
-      if (onlyResults &&
-          !(join.includeInResult ?? _includeJoinedTablesInResult)) continue;
+      if (onlyResults && !(join.includeInResult ?? _includeJoinedTablesInResult)) continue;
 
       yield join.table as ResultSetImplementation;
     }
@@ -248,9 +231,7 @@ class JoinedSelectStatement<FirstT extends HasResultSet, FirstD>
       key: StreamKey(ctx.sql, ctx.boundVariables),
     );
 
-    return database
-        .createStream(fetcher)
-        .asyncMapPerSubscription((rows) => _mapResponse(rows));
+    return database.createStream(fetcher).asyncMapPerSubscription((rows) => _mapResponse(rows));
   }
 
   @override
@@ -298,16 +279,14 @@ class JoinedSelectStatement<FirstT extends HasResultSet, FirstD>
 
   /// Reads a raw database [row] into a [TypedResult] by using information that
   /// doesn't change between rows, such as the expected columns or tables.
-  Future<TypedResult> _mapWithStructure(
-      _ResultStructure structure, Map<String, Object?> row) async {
+  Future<TypedResult> _mapWithStructure(_ResultStructure structure, Map<String, Object?> row) async {
     final readTables = <ResultSetImplementation, dynamic>{};
 
     for (final table in structure.queriedTables) {
       final prefix = '${table.aliasedName}.';
       // if all columns of this table are null, skip the table
       if (table.$columns.any((c) => row[prefix + c.$name] != null)) {
-        readTables[table] =
-            await table.map(row, tablePrefix: table.aliasedName);
+        readTables[table] = await table.map(row, tablePrefix: table.aliasedName);
       }
     }
 
@@ -328,10 +307,9 @@ class JoinedSelectStatement<FirstT extends HasResultSet, FirstD>
     return Future.wait(rows.map((row) => _mapWithStructure(structure, row)));
   }
 
-  Never _warnAboutDuplicate(
-      dynamic cause, StackTrace trace, ResultSetImplementation table) {
+  Never _warnAboutDuplicate(dynamic cause, StackTrace trace, ResultSetImplementation table) {
     throw DriftWrappedException(
-      message: 'This query contained the table ${table.entityName} more than '
+      message: 'This query contained the table ${table.entityColName} more than '
           'once. Is this a typo? \n'
           'If you need a join that includes the same table more than once, you '
           'need to alias() at least one table. See https://drift.simonbinder.eu/queries/joins#aliases '
@@ -366,8 +344,7 @@ class _LazyExpressionMap extends UnmodifiableMapBase<Expression, Object?> {
     if (!containsKey(key) || key is! Expression) return null;
 
     return _cachedData.putIfAbsent(key, () {
-      return _rawData.readNullableWithType(
-          key.driftSqlType, _columnAliases[key]!);
+      return _rawData.readNullableWithType(key.driftSqlType, _columnAliases[key]!);
     });
   }
 

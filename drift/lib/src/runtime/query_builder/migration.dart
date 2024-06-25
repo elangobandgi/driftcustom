@@ -16,10 +16,9 @@ typedef OnBeforeOpen = Future<void> Function(OpeningDetails details);
 
 Future<void> _defaultOnCreate(Migrator m) => m.createAll();
 
-Future<void> _defaultOnUpdate(Migrator m, int from, int to) async =>
-    throw Exception("You've bumped the schema version for your drift database "
-        "but didn't provide a strategy for schema updates. Please do that by "
-        'adapting the migrations getter in your database class.');
+Future<void> _defaultOnUpdate(Migrator m, int from, int to) async => throw Exception("You've bumped the schema version for your drift database "
+    "but didn't provide a strategy for schema updates. Please do that by "
+    'adapting the migrations getter in your database class.');
 
 /// Handles database migrations by delegating work to [OnCreate] and [OnUpgrade]
 /// methods.
@@ -115,8 +114,7 @@ class Migrator {
   }
 
   GenerationContext _createContext({bool supportsVariables = false}) {
-    return GenerationContext.fromDb(database,
-        supportsVariables: supportsVariables);
+    return GenerationContext.fromDb(database, supportsVariables: supportsVariables);
   }
 
   /// Creates the given table if it doesn't exist
@@ -155,12 +153,8 @@ class Migrator {
   /// [other alter]: https://www.sqlite.org/lang_altertable.html#otheralter
   /// [drift docs]: https://drift.simonbinder.eu/docs/advanced-features/migrations/#complex-migrations
   Future<void> alterTable(TableMigration migration) async {
-    final foreignKeysEnabled =
-        (await database.customSelect('PRAGMA foreign_keys').getSingle())
-            .read<bool>('foreign_keys');
-    final legacyAlterTable =
-        (await database.customSelect('PRAGMA legacy_alter_table').getSingle())
-            .read<bool>('legacy_alter_table');
+    final foreignKeysEnabled = (await database.customSelect('PRAGMA foreign_keys').getSingle()).read<bool>('foreign_keys');
+    final legacyAlterTable = (await database.customSelect('PRAGMA legacy_alter_table').getSingle()).read<bool>('legacy_alter_table');
 
     if (foreignKeysEnabled) {
       await database.customStatement('PRAGMA foreign_keys = OFF;');
@@ -260,8 +254,7 @@ class Migrator {
       }
 
       // Step 7: Rename the new table to the old name
-      await _issueCustomQuery(
-          'ALTER TABLE ${context.identifier(temporaryName)} '
+      await _issueCustomQuery('ALTER TABLE ${context.identifier(temporaryName)} '
           'RENAME TO ${context.identifier(tableName)}');
 
       if (!legacyAlterTable) {
@@ -382,15 +375,12 @@ class Migrator {
     if (stmts != null) {
       await _issueQueryByDialect(stmts);
     } else if (view.query != null) {
-      final context =
-          GenerationContext.fromDb(database, supportsVariables: false);
-      final columnNames = view.$columns
-          .map((e) => e.escapedNameFor(context.dialect))
-          .join(', ');
+      final context = GenerationContext.fromDb(database, supportsVariables: false);
+      final columnNames = view.$columns.map((e) => e.escapedNameFor(context.dialect)).join(', ');
 
-      context.generatingForView = view.entityName;
+      context.generatingForView = view.entityColName;
       context.buffer.write('CREATE VIEW IF NOT EXISTS '
-          '${context.identifier(view.entityName)} ($columnNames) AS ');
+          '${context.identifier(view.entityColName)} ($columnNames) AS ');
       view.query!.writeInto(context);
       await _issueCustomQuery(context.sql, const []);
     }
@@ -399,7 +389,7 @@ class Migrator {
   /// Drops a table, trigger or index.
   Future<void> drop(DatabaseSchemaEntity entity) async {
     final context = _createContext();
-    final escapedName = context.identifier(entity.entityName);
+    final escapedName = context.identifier(entity.entityColName);
 
     String kind;
 
@@ -423,16 +413,14 @@ class Migrator {
   /// escape the [name] parameter.
   Future<void> deleteTable(String name) async {
     final context = _createContext();
-    return _issueCustomQuery(
-        'DROP TABLE IF EXISTS ${context.identifier(name)};');
+    return _issueCustomQuery('DROP TABLE IF EXISTS ${context.identifier(name)};');
   }
 
   /// Adds the given column to the specified table.
   Future<void> addColumn(TableInfo table, GeneratedColumn column) async {
     final context = _createContext();
 
-    context.buffer.write(
-        'ALTER TABLE ${context.identifier(table.aliasedName)} ADD COLUMN ');
+    context.buffer.write('ALTER TABLE ${context.identifier(table.aliasedName)} ADD COLUMN ');
     column.writeColumnDefinition(context);
     context.buffer.write(';');
 
@@ -455,8 +443,7 @@ class Migrator {
   /// Note that this method requires sqlite 3.35.0 or later.
   Future<void> dropColumn(TableInfo table, String column) async {
     final context = _createContext();
-    context.buffer.write(
-        'ALTER TABLE ${context.identifier(table.aliasedName)} DROP COLUMN ${context.identifier(column)}');
+    context.buffer.write('ALTER TABLE ${context.identifier(table.aliasedName)} DROP COLUMN ${context.identifier(column)}');
     await _issueCustomQuery(context.sql);
   }
 
@@ -478,8 +465,7 @@ class Migrator {
   /// that version. Otherwise, please ensure that you only use [renameColumn] if
   /// you know you'll run on sqlite 3.20.0 or later. In MariaDB support for that
   /// same syntax was added in MariaDB version 10.5.2, released on 2020-03-26.
-  Future<void> renameColumn(
-      TableInfo table, String oldName, GeneratedColumn column) async {
+  Future<void> renameColumn(TableInfo table, String oldName, GeneratedColumn column) async {
     final context = _createContext();
     context.buffer
       ..write('ALTER TABLE ${context.identifier(table.aliasedName)} ')
@@ -528,8 +514,7 @@ class Migrator {
   /// This method implements an [OnUpgrade] callback by repeatedly invoking
   /// [step] with the current version, assuming that [step] will perform an
   /// upgrade from that version to the version returned by the callback.
-  @Deprecated(
-      'Re-generate code so that it uses `VersionedSchema.stepByStepHelper`')
+  @Deprecated('Re-generate code so that it uses `VersionedSchema.stepByStepHelper`')
   static OnUpgrade stepByStepHelper({
     required MigrationStepWithVersion step,
   }) {
@@ -575,8 +560,7 @@ class Migrator {
     required int to,
     required MigrationStepWithVersion steps,
   }) {
-    return VersionedSchema.runMigrationSteps(
-        migrator: this, from: from, to: to, steps: steps);
+    return VersionedSchema.runMigrationSteps(migrator: this, from: from, to: to, steps: steps);
   }
 }
 
@@ -674,8 +658,7 @@ class TableMigration {
       // isRequired returns false if the column has a client default value that
       // would be used for inserts. We can't apply the client default here
       // though, so it doesn't count as a default value.
-      final isRequired =
-          column.requiredDuringInsert || column.clientDefault != null;
+      final isRequired = column.requiredDuringInsert || column.clientDefault != null;
       if (isRequired && !columnTransformer.containsKey(column)) {
         problematicNewColumns.add(column.$name);
       }

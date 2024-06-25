@@ -19,9 +19,7 @@ class TypeDescription {
   factory TypeDescription.fromDrift(GenerationContext ctx, BaseSqlType type) {
     return switch (type) {
       DriftSqlType() => TypeDescription(type: type),
-      CustomSqlType() ||
-      DialectAwareSqlType() =>
-        TypeDescription(customTypeName: type.sqlTypeName(ctx)),
+      CustomSqlType() || DialectAwareSqlType() => TypeDescription(customTypeName: type.sqlTypeName(ctx)),
     };
   }
 
@@ -47,11 +45,9 @@ class ColumnDescription {
   final TypeDescription type;
   final bool isNullable;
 
-  ColumnDescription(
-      {required this.name, required this.type, required this.isNullable});
+  ColumnDescription({required this.name, required this.type, required this.isNullable});
 
-  factory ColumnDescription.fromDrift(
-      GenerationContext ctx, GeneratedColumn column) {
+  factory ColumnDescription.fromDrift(GenerationContext ctx, GeneratedColumn column) {
     return ColumnDescription(
       name: column.name,
       type: TypeDescription.fromDrift(ctx, column.type),
@@ -82,17 +78,14 @@ class EntityDescription {
   final List<ColumnDescription>? columns;
 
   late Map<String, ColumnDescription> columnsByName = {
-    for (final column in columns ?? const <ColumnDescription>[])
-      column.name: column,
+    for (final column in columns ?? const <ColumnDescription>[]) column.name: column,
   };
 
-  EntityDescription(
-      {required this.name, required this.type, required this.columns});
+  EntityDescription({required this.name, required this.type, required this.columns});
 
-  factory EntityDescription.fromDrift(
-      GenerationContext ctx, DatabaseSchemaEntity entity) {
+  factory EntityDescription.fromDrift(GenerationContext ctx, DatabaseSchemaEntity entity) {
     return EntityDescription(
-      name: entity.entityName,
+      name: entity.entityColName,
       type: switch (entity) {
         VirtualTableInfo() => 'virtual_table',
         TableInfo() => 'table',
@@ -103,8 +96,7 @@ class EntityDescription {
       },
       columns: switch (entity) {
         ResultSetImplementation() => [
-            for (final column in entity.$columns)
-              ColumnDescription.fromDrift(ctx, column),
+            for (final column in entity.$columns) ColumnDescription.fromDrift(ctx, column),
           ],
         _ => null,
       },
@@ -115,9 +107,7 @@ class EntityDescription {
     return EntityDescription(
       name: obj['name'] as String,
       type: obj['type'] as String,
-      columns: (obj['columns'] as List<dynamic>)
-          .map((e) => ColumnDescription.fromJson(e as JsonObject))
-          .toList(),
+      columns: (obj['columns'] as List<dynamic>).map((e) => ColumnDescription.fromJson(e as JsonObject)).toList(),
     );
   }
 
@@ -147,12 +137,9 @@ class DatabaseDescription {
     final context = GenerationContext.fromDb(database);
 
     return DatabaseDescription(
-      dateTimeAsText: database.options
-          .createTypeMapping(SqlDialect.sqlite)
-          .storeDateTimesAsText,
+      dateTimeAsText: database.options.createTypeMapping(SqlDialect.sqlite).storeDateTimesAsText,
       entities: [
-        for (final entity in database.allSchemaEntities)
-          EntityDescription.fromDrift(context, entity),
+        for (final entity in database.allSchemaEntities) EntityDescription.fromDrift(context, entity),
       ],
     );
   }
@@ -160,9 +147,7 @@ class DatabaseDescription {
   factory DatabaseDescription.fromJson(JsonObject obj) {
     return DatabaseDescription(
       dateTimeAsText: obj['dateTimeAsText'] as bool,
-      entities: (obj['entities'] as List<dynamic>)
-          .map((e) => EntityDescription.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      entities: (obj['entities'] as List<dynamic>).map((e) => EntityDescription.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
 

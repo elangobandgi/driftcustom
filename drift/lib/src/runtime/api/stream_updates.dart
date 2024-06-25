@@ -128,44 +128,36 @@ abstract class TableUpdateQuery {
   const factory TableUpdateQuery.any() = AnyUpdateQuery;
 
   /// A query that listens for all updates that match any query in [queries].
-  const factory TableUpdateQuery.allOf(List<TableUpdateQuery> queries) =
-      MultipleUpdateQuery;
+  const factory TableUpdateQuery.allOf(List<TableUpdateQuery> queries) = MultipleUpdateQuery;
 
   /// A query that listens for all updates on a specific [table] by its name.
   ///
   /// The optional [limitUpdateKind] parameter can be used to limit the updates
   /// to a certain kind.
-  const factory TableUpdateQuery.onTableName(String table,
-      {UpdateKind? limitUpdateKind}) = SpecificUpdateQuery;
+  const factory TableUpdateQuery.onTableName(String table, {UpdateKind? limitUpdateKind}) = SpecificUpdateQuery;
 
   /// A query that listens for all updates on a specific [table].
   ///
   /// The optional [limitUpdateKind] parameter can be used to limit the updates
   /// to a certain kind.
-  factory TableUpdateQuery.onTable(ResultSetImplementation table,
-      {UpdateKind? limitUpdateKind}) {
+  factory TableUpdateQuery.onTable(ResultSetImplementation table, {UpdateKind? limitUpdateKind}) {
     if (table is ViewInfo) {
-      return TableUpdateQuery.allOf([
-        for (final table in table.readTables)
-          TableUpdateQuery.onTableName(table)
-      ]);
+      return TableUpdateQuery.allOf([for (final table in table.readTables) TableUpdateQuery.onTableName(table)]);
     }
 
     return TableUpdateQuery.onTableName(
-      table.entityName,
+      table.entityColName,
       limitUpdateKind: limitUpdateKind,
     );
   }
 
   /// A query that listens for any change on any table in [tables].
-  factory TableUpdateQuery.onAllTables(
-      Iterable<ResultSetImplementation> tables) {
+  factory TableUpdateQuery.onAllTables(Iterable<ResultSetImplementation> tables) {
     return TableUpdateQuery.allOf(
       [
         for (final table in tables)
           if (table is ViewInfo)
-            for (final table in table.readTables)
-              TableUpdateQuery.onTableName(table)
+            for (final table in table.readTables) TableUpdateQuery.onTableName(table)
           else
             TableUpdateQuery.onTable(table),
       ],

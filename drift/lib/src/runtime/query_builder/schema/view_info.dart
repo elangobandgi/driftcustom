@@ -9,10 +9,9 @@ part of '../query_builder.dart';
 ///
 /// [sqlite-docs]: https://www.sqlite.org/lang_createview.html
 /// [sql-tut]: https://www.sqlitetutorial.net/sqlite-create-view/
-abstract class ViewInfo<Self extends HasResultSet, Row>
-    implements ResultSetImplementation<Self, Row> {
+abstract class ViewInfo<Self extends HasResultSet, Row> implements ResultSetImplementation<Self, Row> {
   @override
-  String get entityName;
+  String get entityColName;
 
   /// The `CREATE VIEW` sql statement that can be used to create this view.
   ///
@@ -41,8 +40,6 @@ abstract class ViewInfo<Self extends HasResultSet, Row>
 
   @override
   Map<String, GeneratedColumn> get columnsByName {
-    return _columnsByName ??= {
-      for (final column in $columns) column.$name: column
-    };
+    return _columnsByName ??= {for (final column in $columns) column.$name: column};
   }
 }

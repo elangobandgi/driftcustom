@@ -8,13 +8,8 @@ class NoIds extends Table with TableInfo<NoIds, NoIdRow> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   NoIds(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _payloadMeta =
-      const VerificationMeta('payload');
-  late final GeneratedColumn<Uint8List> payload = GeneratedColumn<Uint8List>(
-      'payload', aliasedName, false,
-      type: DriftSqlType.blob,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL PRIMARY KEY');
+  static const VerificationMeta _payloadMeta = const VerificationMeta('payload');
+  late final GeneratedColumn<Uint8List> payload = GeneratedColumn<Uint8List>('payload', aliasedName, false, type: DriftSqlType.blob, requiredDuringInsert: true, $customConstraints: 'NOT NULL PRIMARY KEY');
   @override
   List<GeneratedColumn> get $columns => [payload];
   @override
@@ -23,13 +18,11 @@ class NoIds extends Table with TableInfo<NoIds, NoIdRow> {
   String get actualTableName => $name;
   static const String $name = 'no_ids';
   @override
-  VerificationContext validateIntegrity(Insertable<NoIdRow> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<NoIdRow> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('payload')) {
-      context.handle(_payloadMeta,
-          payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta));
+      context.handle(_payloadMeta, payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta));
     } else if (isInserting) {
       context.missing(_payloadMeta);
     }
@@ -42,8 +35,7 @@ class NoIds extends Table with TableInfo<NoIds, NoIdRow> {
   NoIdRow map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return NoIdRow(
-      attachedDatabase.typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}payload'])!,
+      attachedDatabase.typeMapping.read(DriftSqlType.blob, data['${effectivePrefix}payload'])!,
     );
   }
 
@@ -104,18 +96,10 @@ class WithDefaults extends Table with TableInfo<WithDefaults, WithDefault> {
   final String? _alias;
   WithDefaults(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _aMeta = const VerificationMeta('a');
-  late final GeneratedColumn<String> a = GeneratedColumn<String>(
-      'a', aliasedName, true,
-      type: const CustomTextType(),
-      requiredDuringInsert: false,
-      $customConstraints: 'DEFAULT \'something\'',
-      defaultValue: const CustomExpression('\'something\''));
+  late final GeneratedColumn<String> a =
+      GeneratedColumn<String>('a', aliasedName, true, type: const CustomTextType(), requiredDuringInsert: false, $customConstraints: 'DEFAULT \'something\'', defaultValue: const CustomExpression('\'something\''));
   static const VerificationMeta _bMeta = const VerificationMeta('b');
-  late final GeneratedColumn<int> b = GeneratedColumn<int>(
-      'b', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'UNIQUE NULL');
+  late final GeneratedColumn<int> b = GeneratedColumn<int>('b', aliasedName, true, type: DriftSqlType.int, requiredDuringInsert: false, $customConstraints: 'UNIQUE NULL');
   @override
   List<GeneratedColumn> get $columns => [a, b];
   @override
@@ -124,8 +108,7 @@ class WithDefaults extends Table with TableInfo<WithDefaults, WithDefault> {
   String get actualTableName => $name;
   static const String $name = 'with_defaults';
   @override
-  VerificationContext validateIntegrity(Insertable<WithDefault> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<WithDefault> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('a')) {
@@ -143,10 +126,8 @@ class WithDefaults extends Table with TableInfo<WithDefaults, WithDefault> {
   WithDefault map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return WithDefault(
-      a: attachedDatabase.typeMapping
-          .read(const CustomTextType(), data['${effectivePrefix}a']),
-      b: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}b']),
+      a: attachedDatabase.typeMapping.read(const CustomTextType(), data['${effectivePrefix}a']),
+      b: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}b']),
     );
   }
 
@@ -182,19 +163,14 @@ class WithDefault extends DataClass implements Insertable<WithDefault> {
     );
   }
 
-  factory WithDefault.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory WithDefault.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return WithDefault(
       a: serializer.fromJson<String?>(json['customJsonName']),
       b: serializer.fromJson<int?>(json['b']),
     );
   }
-  factory WithDefault.fromJsonString(String encodedJson,
-          {ValueSerializer? serializer}) =>
-      WithDefault.fromJson(
-          DataClass.parseJson(encodedJson) as Map<String, dynamic>,
-          serializer: serializer);
+  factory WithDefault.fromJsonString(String encodedJson, {ValueSerializer? serializer}) => WithDefault.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>, serializer: serializer);
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -204,10 +180,7 @@ class WithDefault extends DataClass implements Insertable<WithDefault> {
     };
   }
 
-  WithDefault copyWith(
-          {Value<String?> a = const Value.absent(),
-          Value<int?> b = const Value.absent()}) =>
-      WithDefault(
+  WithDefault copyWith({Value<String?> a = const Value.absent(), Value<int?> b = const Value.absent()}) => WithDefault(
         a: a.present ? a.value : this.a,
         b: b.present ? b.value : this.b,
       );
@@ -230,9 +203,7 @@ class WithDefault extends DataClass implements Insertable<WithDefault> {
   @override
   int get hashCode => Object.hash(a, b);
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is WithDefault && other.a == this.a && other.b == this.b);
+  bool operator ==(Object other) => identical(this, other) || (other is WithDefault && other.a == this.a && other.b == this.b);
 }
 
 class WithDefaultsCompanion extends UpdateCompanion<WithDefault> {
@@ -261,8 +232,7 @@ class WithDefaultsCompanion extends UpdateCompanion<WithDefault> {
     });
   }
 
-  WithDefaultsCompanion copyWith(
-      {Value<String?>? a, Value<int?>? b, Value<int>? rowid}) {
+  WithDefaultsCompanion copyWith({Value<String?>? a, Value<int?>? b, Value<int>? rowid}) {
     return WithDefaultsCompanion(
       a: a ?? this.a,
       b: b ?? this.b,
@@ -296,30 +266,17 @@ class WithDefaultsCompanion extends UpdateCompanion<WithDefault> {
   }
 }
 
-class WithConstraints extends Table
-    with TableInfo<WithConstraints, WithConstraint> {
+class WithConstraints extends Table with TableInfo<WithConstraints, WithConstraint> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   WithConstraints(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _aMeta = const VerificationMeta('a');
-  late final GeneratedColumn<String> a = GeneratedColumn<String>(
-      'a', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+  late final GeneratedColumn<String> a = GeneratedColumn<String>('a', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false, $customConstraints: '');
   static const VerificationMeta _bMeta = const VerificationMeta('b');
-  late final GeneratedColumn<int> b = GeneratedColumn<int>(
-      'b', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
+  late final GeneratedColumn<int> b = GeneratedColumn<int>('b', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
   static const VerificationMeta _cMeta = const VerificationMeta('c');
-  late final GeneratedColumn<double> c = GeneratedColumn<double>(
-      'c', aliasedName, true,
-      type: DriftSqlType.double,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+  late final GeneratedColumn<double> c = GeneratedColumn<double>('c', aliasedName, true, type: DriftSqlType.double, requiredDuringInsert: false, $customConstraints: '');
   @override
   List<GeneratedColumn> get $columns => [a, b, c];
   @override
@@ -328,8 +285,7 @@ class WithConstraints extends Table
   String get actualTableName => $name;
   static const String $name = 'with_constraints';
   @override
-  VerificationContext validateIntegrity(Insertable<WithConstraint> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<WithConstraint> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('a')) {
@@ -352,12 +308,9 @@ class WithConstraints extends Table
   WithConstraint map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return WithConstraint(
-      a: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}a']),
-      b: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}b'])!,
-      c: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}c']),
+      a: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}a']),
+      b: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}b'])!,
+      c: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}c']),
     );
   }
 
@@ -367,8 +320,7 @@ class WithConstraints extends Table
   }
 
   @override
-  List<String> get customConstraints =>
-      const ['FOREIGN KEY(a, b)REFERENCES with_defaults(a, b)'];
+  List<String> get customConstraints => const ['FOREIGN KEY(a, b)REFERENCES with_defaults(a, b)'];
   @override
   bool get dontWriteConstraints => true;
 }
@@ -399,8 +351,7 @@ class WithConstraint extends DataClass implements Insertable<WithConstraint> {
     );
   }
 
-  factory WithConstraint.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory WithConstraint.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return WithConstraint(
       a: serializer.fromJson<String?>(json['a']),
@@ -408,11 +359,7 @@ class WithConstraint extends DataClass implements Insertable<WithConstraint> {
       c: serializer.fromJson<double?>(json['c']),
     );
   }
-  factory WithConstraint.fromJsonString(String encodedJson,
-          {ValueSerializer? serializer}) =>
-      WithConstraint.fromJson(
-          DataClass.parseJson(encodedJson) as Map<String, dynamic>,
-          serializer: serializer);
+  factory WithConstraint.fromJsonString(String encodedJson, {ValueSerializer? serializer}) => WithConstraint.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>, serializer: serializer);
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -423,11 +370,7 @@ class WithConstraint extends DataClass implements Insertable<WithConstraint> {
     };
   }
 
-  WithConstraint copyWith(
-          {Value<String?> a = const Value.absent(),
-          int? b,
-          Value<double?> c = const Value.absent()}) =>
-      WithConstraint(
+  WithConstraint copyWith({Value<String?> a = const Value.absent(), int? b, Value<double?> c = const Value.absent()}) => WithConstraint(
         a: a.present ? a.value : this.a,
         b: b ?? this.b,
         c: c.present ? c.value : this.c,
@@ -453,12 +396,7 @@ class WithConstraint extends DataClass implements Insertable<WithConstraint> {
   @override
   int get hashCode => Object.hash(a, b, c);
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is WithConstraint &&
-          other.a == this.a &&
-          other.b == this.b &&
-          other.c == this.c);
+  bool operator ==(Object other) => identical(this, other) || (other is WithConstraint && other.a == this.a && other.b == this.b && other.c == this.c);
 }
 
 class WithConstraintsCompanion extends UpdateCompanion<WithConstraint> {
@@ -492,11 +430,7 @@ class WithConstraintsCompanion extends UpdateCompanion<WithConstraint> {
     });
   }
 
-  WithConstraintsCompanion copyWith(
-      {Value<String?>? a,
-      Value<int>? b,
-      Value<double?>? c,
-      Value<int>? rowid}) {
+  WithConstraintsCompanion copyWith({Value<String?>? a, Value<int>? b, Value<double?>? c, Value<int>? rowid}) {
     return WithConstraintsCompanion(
       a: a ?? this.a,
       b: b ?? this.b,
@@ -540,61 +474,34 @@ class ConfigTable extends Table with TableInfo<ConfigTable, Config> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   ConfigTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _configKeyMeta =
-      const VerificationMeta('configKey');
-  late final GeneratedColumn<String> configKey = GeneratedColumn<String>(
-      'config_key', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL PRIMARY KEY');
-  static const VerificationMeta _configValueMeta =
-      const VerificationMeta('configValue');
-  late final GeneratedColumn<DriftAny> configValue = GeneratedColumn<DriftAny>(
-      'config_value', aliasedName, true,
-      type: DriftSqlType.any,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _syncStateMeta =
-      const VerificationMeta('syncState');
+  static const VerificationMeta _configKeyMeta = const VerificationMeta('configKey');
+  late final GeneratedColumn<String> configKey = GeneratedColumn<String>('config_key', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true, $customConstraints: 'NOT NULL PRIMARY KEY');
+  static const VerificationMeta _configValueMeta = const VerificationMeta('configValue');
+  late final GeneratedColumn<DriftAny> configValue = GeneratedColumn<DriftAny>('config_value', aliasedName, true, type: DriftSqlType.any, requiredDuringInsert: false, $customConstraints: '');
+  static const VerificationMeta _syncStateMeta = const VerificationMeta('syncState');
   late final GeneratedColumnWithTypeConverter<SyncType?, int> syncState =
-      GeneratedColumn<int>('sync_state', aliasedName, true,
-              type: DriftSqlType.int,
-              requiredDuringInsert: false,
-              $customConstraints: '')
-          .withConverter<SyncType?>(ConfigTable.$convertersyncStaten);
-  static const VerificationMeta _syncStateImplicitMeta =
-      const VerificationMeta('syncStateImplicit');
-  late final GeneratedColumnWithTypeConverter<SyncType?, int>
-      syncStateImplicit = GeneratedColumn<int>(
-              'sync_state_implicit', aliasedName, true,
-              type: DriftSqlType.int,
-              requiredDuringInsert: false,
-              $customConstraints: '')
-          .withConverter<SyncType?>(ConfigTable.$convertersyncStateImplicitn);
+      GeneratedColumn<int>('sync_state', aliasedName, true, type: DriftSqlType.int, requiredDuringInsert: false, $customConstraints: '').withConverter<SyncType?>(ConfigTable.$convertersyncStaten);
+  static const VerificationMeta _syncStateImplicitMeta = const VerificationMeta('syncStateImplicit');
+  late final GeneratedColumnWithTypeConverter<SyncType?, int> syncStateImplicit =
+      GeneratedColumn<int>('sync_state_implicit', aliasedName, true, type: DriftSqlType.int, requiredDuringInsert: false, $customConstraints: '').withConverter<SyncType?>(ConfigTable.$convertersyncStateImplicitn);
   @override
-  List<GeneratedColumn> get $columns =>
-      [configKey, configValue, syncState, syncStateImplicit];
+  List<GeneratedColumn> get $columns => [configKey, configValue, syncState, syncStateImplicit];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'config';
   @override
-  VerificationContext validateIntegrity(Insertable<Config> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<Config> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('config_key')) {
-      context.handle(_configKeyMeta,
-          configKey.isAcceptableOrUnknown(data['config_key']!, _configKeyMeta));
+      context.handle(_configKeyMeta, configKey.isAcceptableOrUnknown(data['config_key']!, _configKeyMeta));
     } else if (isInserting) {
       context.missing(_configKeyMeta);
     }
     if (data.containsKey('config_value')) {
-      context.handle(
-          _configValueMeta,
-          configValue.isAcceptableOrUnknown(
-              data['config_value']!, _configValueMeta));
+      context.handle(_configValueMeta, configValue.isAcceptableOrUnknown(data['config_value']!, _configValueMeta));
     }
     context.handle(_syncStateMeta, const VerificationResult.success());
     context.handle(_syncStateImplicitMeta, const VerificationResult.success());
@@ -607,16 +514,10 @@ class ConfigTable extends Table with TableInfo<ConfigTable, Config> {
   Config map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return Config(
-      configKey: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}config_key'])!,
-      configValue: attachedDatabase.typeMapping
-          .read(DriftSqlType.any, data['${effectivePrefix}config_value']),
-      syncState: ConfigTable.$convertersyncStaten.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}sync_state'])),
-      syncStateImplicit: ConfigTable.$convertersyncStateImplicitn.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.int, data['${effectivePrefix}sync_state_implicit'])),
+      configKey: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}config_key'])!,
+      configValue: attachedDatabase.typeMapping.read(DriftSqlType.any, data['${effectivePrefix}config_value']),
+      syncState: ConfigTable.$convertersyncStaten.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_state'])),
+      syncStateImplicit: ConfigTable.$convertersyncStateImplicitn.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_state_implicit'])),
     );
   }
 
@@ -625,15 +526,10 @@ class ConfigTable extends Table with TableInfo<ConfigTable, Config> {
     return ConfigTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<SyncType, int> $convertersyncState =
-      const SyncTypeConverter();
-  static TypeConverter<SyncType?, int?> $convertersyncStaten =
-      NullAwareTypeConverter.wrap($convertersyncState);
-  static JsonTypeConverter2<SyncType, int, int> $convertersyncStateImplicit =
-      const EnumIndexConverter<SyncType>(SyncType.values);
-  static JsonTypeConverter2<SyncType?, int?, int?>
-      $convertersyncStateImplicitn =
-      JsonTypeConverter2.asNullable($convertersyncStateImplicit);
+  static TypeConverter<SyncType, int> $convertersyncState = const SyncTypeConverter();
+  static TypeConverter<SyncType?, int?> $convertersyncStaten = NullAwareTypeConverter.wrap($convertersyncState);
+  static JsonTypeConverter2<SyncType, int, int> $convertersyncStateImplicit = const EnumIndexConverter<SyncType>(SyncType.values);
+  static JsonTypeConverter2<SyncType?, int?, int?> $convertersyncStateImplicitn = JsonTypeConverter2.asNullable($convertersyncStateImplicit);
   @override
   bool get isStrict => true;
   @override
@@ -647,11 +543,7 @@ class Config extends DataClass implements Insertable<Config> {
   final DriftAny? configValue;
   final SyncType? syncState;
   final SyncType? syncStateImplicit;
-  const Config(
-      {required this.configKey,
-      this.configValue,
-      this.syncState,
-      this.syncStateImplicit});
+  const Config({required this.configKey, this.configValue, this.syncState, this.syncStateImplicit});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -660,12 +552,10 @@ class Config extends DataClass implements Insertable<Config> {
       map['config_value'] = Variable<DriftAny>(configValue);
     }
     if (!nullToAbsent || syncState != null) {
-      map['sync_state'] =
-          Variable<int>(ConfigTable.$convertersyncStaten.toSql(syncState));
+      map['sync_state'] = Variable<int>(ConfigTable.$convertersyncStaten.toSql(syncState));
     }
     if (!nullToAbsent || syncStateImplicit != null) {
-      map['sync_state_implicit'] = Variable<int>(
-          ConfigTable.$convertersyncStateImplicitn.toSql(syncStateImplicit));
+      map['sync_state_implicit'] = Variable<int>(ConfigTable.$convertersyncStateImplicitn.toSql(syncStateImplicit));
     }
     return map;
   }
@@ -673,33 +563,22 @@ class Config extends DataClass implements Insertable<Config> {
   ConfigCompanion toCompanion(bool nullToAbsent) {
     return ConfigCompanion(
       configKey: Value(configKey),
-      configValue: configValue == null && nullToAbsent
-          ? const Value.absent()
-          : Value(configValue),
-      syncState: syncState == null && nullToAbsent
-          ? const Value.absent()
-          : Value(syncState),
-      syncStateImplicit: syncStateImplicit == null && nullToAbsent
-          ? const Value.absent()
-          : Value(syncStateImplicit),
+      configValue: configValue == null && nullToAbsent ? const Value.absent() : Value(configValue),
+      syncState: syncState == null && nullToAbsent ? const Value.absent() : Value(syncState),
+      syncStateImplicit: syncStateImplicit == null && nullToAbsent ? const Value.absent() : Value(syncStateImplicit),
     );
   }
 
-  factory Config.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory Config.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Config(
       configKey: serializer.fromJson<String>(json['config_key']),
       configValue: serializer.fromJson<DriftAny?>(json['config_value']),
       syncState: serializer.fromJson<SyncType?>(json['sync_state']),
-      syncStateImplicit: ConfigTable.$convertersyncStateImplicitn
-          .fromJson(serializer.fromJson<int?>(json['sync_state_implicit'])),
+      syncStateImplicit: ConfigTable.$convertersyncStateImplicitn.fromJson(serializer.fromJson<int?>(json['sync_state_implicit'])),
     );
   }
-  factory Config.fromJsonString(String encodedJson,
-          {ValueSerializer? serializer}) =>
-      Config.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>,
-          serializer: serializer);
+  factory Config.fromJsonString(String encodedJson, {ValueSerializer? serializer}) => Config.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>, serializer: serializer);
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -707,33 +586,22 @@ class Config extends DataClass implements Insertable<Config> {
       'config_key': serializer.toJson<String>(configKey),
       'config_value': serializer.toJson<DriftAny?>(configValue),
       'sync_state': serializer.toJson<SyncType?>(syncState),
-      'sync_state_implicit': serializer.toJson<int?>(
-          ConfigTable.$convertersyncStateImplicitn.toJson(syncStateImplicit)),
+      'sync_state_implicit': serializer.toJson<int?>(ConfigTable.$convertersyncStateImplicitn.toJson(syncStateImplicit)),
     };
   }
 
-  Config copyWith(
-          {String? configKey,
-          Value<DriftAny?> configValue = const Value.absent(),
-          Value<SyncType?> syncState = const Value.absent(),
-          Value<SyncType?> syncStateImplicit = const Value.absent()}) =>
-      Config(
+  Config copyWith({String? configKey, Value<DriftAny?> configValue = const Value.absent(), Value<SyncType?> syncState = const Value.absent(), Value<SyncType?> syncStateImplicit = const Value.absent()}) => Config(
         configKey: configKey ?? this.configKey,
         configValue: configValue.present ? configValue.value : this.configValue,
         syncState: syncState.present ? syncState.value : this.syncState,
-        syncStateImplicit: syncStateImplicit.present
-            ? syncStateImplicit.value
-            : this.syncStateImplicit,
+        syncStateImplicit: syncStateImplicit.present ? syncStateImplicit.value : this.syncStateImplicit,
       );
   Config copyWithCompanion(ConfigCompanion data) {
     return Config(
       configKey: data.configKey.present ? data.configKey.value : this.configKey,
-      configValue:
-          data.configValue.present ? data.configValue.value : this.configValue,
+      configValue: data.configValue.present ? data.configValue.value : this.configValue,
       syncState: data.syncState.present ? data.syncState.value : this.syncState,
-      syncStateImplicit: data.syncStateImplicit.present
-          ? data.syncStateImplicit.value
-          : this.syncStateImplicit,
+      syncStateImplicit: data.syncStateImplicit.present ? data.syncStateImplicit.value : this.syncStateImplicit,
     );
   }
 
@@ -749,16 +617,10 @@ class Config extends DataClass implements Insertable<Config> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(configKey, configValue, syncState, syncStateImplicit);
+  int get hashCode => Object.hash(configKey, configValue, syncState, syncStateImplicit);
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Config &&
-          other.configKey == this.configKey &&
-          other.configValue == this.configValue &&
-          other.syncState == this.syncState &&
-          other.syncStateImplicit == this.syncStateImplicit);
+      identical(this, other) || (other is Config && other.configKey == this.configKey && other.configValue == this.configValue && other.syncState == this.syncState && other.syncStateImplicit == this.syncStateImplicit);
 }
 
 class ConfigCompanion extends UpdateCompanion<Config> {
@@ -797,12 +659,7 @@ class ConfigCompanion extends UpdateCompanion<Config> {
     });
   }
 
-  ConfigCompanion copyWith(
-      {Value<String>? configKey,
-      Value<DriftAny?>? configValue,
-      Value<SyncType?>? syncState,
-      Value<SyncType?>? syncStateImplicit,
-      Value<int>? rowid}) {
+  ConfigCompanion copyWith({Value<String>? configKey, Value<DriftAny?>? configValue, Value<SyncType?>? syncState, Value<SyncType?>? syncStateImplicit, Value<int>? rowid}) {
     return ConfigCompanion(
       configKey: configKey ?? this.configKey,
       configValue: configValue ?? this.configValue,
@@ -822,13 +679,10 @@ class ConfigCompanion extends UpdateCompanion<Config> {
       map['config_value'] = Variable<DriftAny>(configValue.value);
     }
     if (syncState.present) {
-      map['sync_state'] = Variable<int>(
-          ConfigTable.$convertersyncStaten.toSql(syncState.value));
+      map['sync_state'] = Variable<int>(ConfigTable.$convertersyncStaten.toSql(syncState.value));
     }
     if (syncStateImplicit.present) {
-      map['sync_state_implicit'] = Variable<int>(ConfigTable
-          .$convertersyncStateImplicitn
-          .toSql(syncStateImplicit.value));
+      map['sync_state_implicit'] = Variable<int>(ConfigTable.$convertersyncStateImplicitn.toSql(syncStateImplicit.value));
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -855,63 +709,35 @@ class Mytable extends Table with TableInfo<Mytable, MytableData> {
   final String? _alias;
   Mytable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _someidMeta = const VerificationMeta('someid');
-  late final GeneratedColumn<int> someid = GeneratedColumn<int>(
-      'someid', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _sometextMeta =
-      const VerificationMeta('sometext');
-  late final GeneratedColumn<String> sometext = GeneratedColumn<String>(
-      'sometext', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _isInsertingMeta =
-      const VerificationMeta('isInserting');
-  late final GeneratedColumn<bool> isInserting = GeneratedColumn<bool>(
-      'is_inserting', aliasedName, true,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: false,
-      $customConstraints: '');
-  static const VerificationMeta _somedateMeta =
-      const VerificationMeta('somedate');
-  late final GeneratedColumn<DateTime> somedate = GeneratedColumn<DateTime>(
-      'somedate', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+  late final GeneratedColumn<int> someid = GeneratedColumn<int>('someid', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: false, $customConstraints: 'NOT NULL');
+  static const VerificationMeta _sometextMeta = const VerificationMeta('sometext');
+  late final GeneratedColumn<String> sometext = GeneratedColumn<String>('sometext', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false, $customConstraints: '');
+  static const VerificationMeta _isInsertingMeta = const VerificationMeta('isInserting');
+  late final GeneratedColumn<bool> isInserting = GeneratedColumn<bool>('is_inserting', aliasedName, true, type: DriftSqlType.bool, requiredDuringInsert: false, $customConstraints: '');
+  static const VerificationMeta _somedateMeta = const VerificationMeta('somedate');
+  late final GeneratedColumn<DateTime> somedate = GeneratedColumn<DateTime>('somedate', aliasedName, true, type: DriftSqlType.dateTime, requiredDuringInsert: false, $customConstraints: '');
   @override
-  List<GeneratedColumn> get $columns =>
-      [someid, sometext, isInserting, somedate];
+  List<GeneratedColumn> get $columns => [someid, sometext, isInserting, somedate];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
   static const String $name = 'mytable';
   @override
-  VerificationContext validateIntegrity(Insertable<MytableData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<MytableData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('someid')) {
-      context.handle(_someidMeta,
-          someid.isAcceptableOrUnknown(data['someid']!, _someidMeta));
+      context.handle(_someidMeta, someid.isAcceptableOrUnknown(data['someid']!, _someidMeta));
     }
     if (data.containsKey('sometext')) {
-      context.handle(_sometextMeta,
-          sometext.isAcceptableOrUnknown(data['sometext']!, _sometextMeta));
+      context.handle(_sometextMeta, sometext.isAcceptableOrUnknown(data['sometext']!, _sometextMeta));
     }
     if (data.containsKey('is_inserting')) {
-      context.handle(
-          _isInsertingMeta,
-          this
-              .isInserting
-              .isAcceptableOrUnknown(data['is_inserting']!, _isInsertingMeta));
+      context.handle(_isInsertingMeta, this.isInserting.isAcceptableOrUnknown(data['is_inserting']!, _isInsertingMeta));
     }
     if (data.containsKey('somedate')) {
-      context.handle(_somedateMeta,
-          somedate.isAcceptableOrUnknown(data['somedate']!, _somedateMeta));
+      context.handle(_somedateMeta, somedate.isAcceptableOrUnknown(data['somedate']!, _somedateMeta));
     }
     return context;
   }
@@ -926,14 +752,10 @@ class Mytable extends Table with TableInfo<Mytable, MytableData> {
   MytableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return MytableData(
-      someid: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}someid'])!,
-      sometext: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}sometext']),
-      isInserting: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_inserting']),
-      somedate: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}somedate']),
+      someid: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}someid'])!,
+      sometext: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}sometext']),
+      isInserting: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_inserting']),
+      somedate: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}somedate']),
     );
   }
 
@@ -943,8 +765,7 @@ class Mytable extends Table with TableInfo<Mytable, MytableData> {
   }
 
   @override
-  List<String> get customConstraints =>
-      const ['PRIMARY KEY(someid DESC)', 'UNIQUE(sometext, is_inserting)'];
+  List<String> get customConstraints => const ['PRIMARY KEY(someid DESC)', 'UNIQUE(sometext, is_inserting)'];
   @override
   bool get dontWriteConstraints => true;
 }
@@ -954,8 +775,7 @@ class MytableData extends DataClass implements Insertable<MytableData> {
   final String? sometext;
   final bool? isInserting;
   final DateTime? somedate;
-  const MytableData(
-      {required this.someid, this.sometext, this.isInserting, this.somedate});
+  const MytableData({required this.someid, this.sometext, this.isInserting, this.somedate});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -975,20 +795,13 @@ class MytableData extends DataClass implements Insertable<MytableData> {
   MytableCompanion toCompanion(bool nullToAbsent) {
     return MytableCompanion(
       someid: Value(someid),
-      sometext: sometext == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sometext),
-      isInserting: isInserting == null && nullToAbsent
-          ? const Value.absent()
-          : Value(isInserting),
-      somedate: somedate == null && nullToAbsent
-          ? const Value.absent()
-          : Value(somedate),
+      sometext: sometext == null && nullToAbsent ? const Value.absent() : Value(sometext),
+      isInserting: isInserting == null && nullToAbsent ? const Value.absent() : Value(isInserting),
+      somedate: somedate == null && nullToAbsent ? const Value.absent() : Value(somedate),
     );
   }
 
-  factory MytableData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory MytableData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return MytableData(
       someid: serializer.fromJson<int>(json['someid']),
@@ -997,11 +810,7 @@ class MytableData extends DataClass implements Insertable<MytableData> {
       somedate: serializer.fromJson<DateTime?>(json['somedate']),
     );
   }
-  factory MytableData.fromJsonString(String encodedJson,
-          {ValueSerializer? serializer}) =>
-      MytableData.fromJson(
-          DataClass.parseJson(encodedJson) as Map<String, dynamic>,
-          serializer: serializer);
+  factory MytableData.fromJsonString(String encodedJson, {ValueSerializer? serializer}) => MytableData.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>, serializer: serializer);
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -1013,12 +822,7 @@ class MytableData extends DataClass implements Insertable<MytableData> {
     };
   }
 
-  MytableData copyWith(
-          {int? someid,
-          Value<String?> sometext = const Value.absent(),
-          Value<bool?> isInserting = const Value.absent(),
-          Value<DateTime?> somedate = const Value.absent()}) =>
-      MytableData(
+  MytableData copyWith({int? someid, Value<String?> sometext = const Value.absent(), Value<bool?> isInserting = const Value.absent(), Value<DateTime?> somedate = const Value.absent()}) => MytableData(
         someid: someid ?? this.someid,
         sometext: sometext.present ? sometext.value : this.sometext,
         isInserting: isInserting.present ? isInserting.value : this.isInserting,
@@ -1028,8 +832,7 @@ class MytableData extends DataClass implements Insertable<MytableData> {
     return MytableData(
       someid: data.someid.present ? data.someid.value : this.someid,
       sometext: data.sometext.present ? data.sometext.value : this.sometext,
-      isInserting:
-          data.isInserting.present ? data.isInserting.value : this.isInserting,
+      isInserting: data.isInserting.present ? data.isInserting.value : this.isInserting,
       somedate: data.somedate.present ? data.somedate.value : this.somedate,
     );
   }
@@ -1049,12 +852,7 @@ class MytableData extends DataClass implements Insertable<MytableData> {
   int get hashCode => Object.hash(someid, sometext, isInserting, somedate);
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is MytableData &&
-          other.someid == this.someid &&
-          other.sometext == this.sometext &&
-          other.isInserting == this.isInserting &&
-          other.somedate == this.somedate);
+      identical(this, other) || (other is MytableData && other.someid == this.someid && other.sometext == this.sometext && other.isInserting == this.isInserting && other.somedate == this.somedate);
 }
 
 class MytableCompanion extends UpdateCompanion<MytableData> {
@@ -1088,11 +886,7 @@ class MytableCompanion extends UpdateCompanion<MytableData> {
     });
   }
 
-  MytableCompanion copyWith(
-      {Value<int>? someid,
-      Value<String?>? sometext,
-      Value<bool?>? isInserting,
-      Value<DateTime?>? somedate}) {
+  MytableCompanion copyWith({Value<int>? someid, Value<String?>? sometext, Value<bool?>? isInserting, Value<DateTime?>? somedate}) {
     return MytableCompanion(
       someid: someid ?? this.someid,
       sometext: sometext ?? this.sometext,
@@ -1131,30 +925,17 @@ class MytableCompanion extends UpdateCompanion<MytableData> {
   }
 }
 
-class Email extends Table
-    with TableInfo<Email, EMail>, VirtualTableInfo<Email, EMail> {
+class Email extends Table with TableInfo<Email, EMail>, VirtualTableInfo<Email, EMail> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   Email(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _senderMeta = const VerificationMeta('sender');
-  late final GeneratedColumn<String> sender = GeneratedColumn<String>(
-      'sender', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: '');
+  late final GeneratedColumn<String> sender = GeneratedColumn<String>('sender', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true, $customConstraints: '');
   static const VerificationMeta _titleMeta = const VerificationMeta('title');
-  late final GeneratedColumn<String> title = GeneratedColumn<String>(
-      'title', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: '');
+  late final GeneratedColumn<String> title = GeneratedColumn<String>('title', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true, $customConstraints: '');
   static const VerificationMeta _bodyMeta = const VerificationMeta('body');
-  late final GeneratedColumn<String> body = GeneratedColumn<String>(
-      'body', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: '');
+  late final GeneratedColumn<String> body = GeneratedColumn<String>('body', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true, $customConstraints: '');
   @override
   List<GeneratedColumn> get $columns => [sender, title, body];
   @override
@@ -1163,25 +944,21 @@ class Email extends Table
   String get actualTableName => $name;
   static const String $name = 'email';
   @override
-  VerificationContext validateIntegrity(Insertable<EMail> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<EMail> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('sender')) {
-      context.handle(_senderMeta,
-          sender.isAcceptableOrUnknown(data['sender']!, _senderMeta));
+      context.handle(_senderMeta, sender.isAcceptableOrUnknown(data['sender']!, _senderMeta));
     } else if (isInserting) {
       context.missing(_senderMeta);
     }
     if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+      context.handle(_titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
     if (data.containsKey('body')) {
-      context.handle(
-          _bodyMeta, body.isAcceptableOrUnknown(data['body']!, _bodyMeta));
+      context.handle(_bodyMeta, body.isAcceptableOrUnknown(data['body']!, _bodyMeta));
     } else if (isInserting) {
       context.missing(_bodyMeta);
     }
@@ -1194,12 +971,9 @@ class Email extends Table
   EMail map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return EMail(
-      sender: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}sender'])!,
-      title: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
-      body: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}body'])!,
+      sender: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}sender'])!,
+      title: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      body: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}body'])!,
     );
   }
 
@@ -1236,8 +1010,7 @@ class EMail extends DataClass implements Insertable<EMail> {
     );
   }
 
-  factory EMail.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory EMail.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return EMail(
       sender: serializer.fromJson<String>(json['sender']),
@@ -1245,10 +1018,7 @@ class EMail extends DataClass implements Insertable<EMail> {
       body: serializer.fromJson<String>(json['body']),
     );
   }
-  factory EMail.fromJsonString(String encodedJson,
-          {ValueSerializer? serializer}) =>
-      EMail.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>,
-          serializer: serializer);
+  factory EMail.fromJsonString(String encodedJson, {ValueSerializer? serializer}) => EMail.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>, serializer: serializer);
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -1285,12 +1055,7 @@ class EMail extends DataClass implements Insertable<EMail> {
   @override
   int get hashCode => Object.hash(sender, title, body);
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is EMail &&
-          other.sender == this.sender &&
-          other.title == this.title &&
-          other.body == this.body);
+  bool operator ==(Object other) => identical(this, other) || (other is EMail && other.sender == this.sender && other.title == this.title && other.body == this.body);
 }
 
 class EmailCompanion extends UpdateCompanion<EMail> {
@@ -1326,11 +1091,7 @@ class EmailCompanion extends UpdateCompanion<EMail> {
     });
   }
 
-  EmailCompanion copyWith(
-      {Value<String>? sender,
-      Value<String>? title,
-      Value<String>? body,
-      Value<int>? rowid}) {
+  EmailCompanion copyWith({Value<String>? sender, Value<String>? title, Value<String>? body, Value<int>? rowid}) {
     return EmailCompanion(
       sender: sender ?? this.sender,
       title: title ?? this.title,
@@ -1374,20 +1135,10 @@ class WeirdTable extends Table with TableInfo<WeirdTable, WeirdData> {
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   WeirdTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _sqlClassMeta =
-      const VerificationMeta('sqlClass');
-  late final GeneratedColumn<int> sqlClass = GeneratedColumn<int>(
-      'class', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
-  static const VerificationMeta _textColumnMeta =
-      const VerificationMeta('textColumn');
-  late final GeneratedColumn<String> textColumn = GeneratedColumn<String>(
-      'text', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
+  static const VerificationMeta _sqlClassMeta = const VerificationMeta('sqlClass');
+  late final GeneratedColumn<int> sqlClass = GeneratedColumn<int>('class', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
+  static const VerificationMeta _textColumnMeta = const VerificationMeta('textColumn');
+  late final GeneratedColumn<String> textColumn = GeneratedColumn<String>('text', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true, $customConstraints: 'NOT NULL');
   @override
   List<GeneratedColumn> get $columns => [sqlClass, textColumn];
   @override
@@ -1396,19 +1147,16 @@ class WeirdTable extends Table with TableInfo<WeirdTable, WeirdData> {
   String get actualTableName => $name;
   static const String $name = 'Expression';
   @override
-  VerificationContext validateIntegrity(Insertable<WeirdData> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<WeirdData> instance, {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('class')) {
-      context.handle(_sqlClassMeta,
-          sqlClass.isAcceptableOrUnknown(data['class']!, _sqlClassMeta));
+      context.handle(_sqlClassMeta, sqlClass.isAcceptableOrUnknown(data['class']!, _sqlClassMeta));
     } else if (isInserting) {
       context.missing(_sqlClassMeta);
     }
     if (data.containsKey('text')) {
-      context.handle(_textColumnMeta,
-          textColumn.isAcceptableOrUnknown(data['text']!, _textColumnMeta));
+      context.handle(_textColumnMeta, textColumn.isAcceptableOrUnknown(data['text']!, _textColumnMeta));
     } else if (isInserting) {
       context.missing(_textColumnMeta);
     }
@@ -1421,10 +1169,8 @@ class WeirdTable extends Table with TableInfo<WeirdTable, WeirdData> {
   WeirdData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return WeirdData(
-      sqlClass: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}class'])!,
-      textColumn: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}text'])!,
+      sqlClass: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}class'])!,
+      textColumn: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}text'])!,
     );
   }
 
@@ -1456,19 +1202,14 @@ class WeirdData extends DataClass implements Insertable<WeirdData> {
     );
   }
 
-  factory WeirdData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory WeirdData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return WeirdData(
       sqlClass: serializer.fromJson<int>(json['class']),
       textColumn: serializer.fromJson<String>(json['text']),
     );
   }
-  factory WeirdData.fromJsonString(String encodedJson,
-          {ValueSerializer? serializer}) =>
-      WeirdData.fromJson(
-          DataClass.parseJson(encodedJson) as Map<String, dynamic>,
-          serializer: serializer);
+  factory WeirdData.fromJsonString(String encodedJson, {ValueSerializer? serializer}) => WeirdData.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>, serializer: serializer);
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -1485,8 +1226,7 @@ class WeirdData extends DataClass implements Insertable<WeirdData> {
   WeirdData copyWithCompanion(WeirdTableCompanion data) {
     return WeirdData(
       sqlClass: data.sqlClass.present ? data.sqlClass.value : this.sqlClass,
-      textColumn:
-          data.textColumn.present ? data.textColumn.value : this.textColumn,
+      textColumn: data.textColumn.present ? data.textColumn.value : this.textColumn,
     );
   }
 
@@ -1502,11 +1242,7 @@ class WeirdData extends DataClass implements Insertable<WeirdData> {
   @override
   int get hashCode => Object.hash(sqlClass, textColumn);
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is WeirdData &&
-          other.sqlClass == this.sqlClass &&
-          other.textColumn == this.textColumn);
+  bool operator ==(Object other) => identical(this, other) || (other is WeirdData && other.sqlClass == this.sqlClass && other.textColumn == this.textColumn);
 }
 
 class WeirdTableCompanion extends UpdateCompanion<WeirdData> {
@@ -1536,8 +1272,7 @@ class WeirdTableCompanion extends UpdateCompanion<WeirdData> {
     });
   }
 
-  WeirdTableCompanion copyWith(
-      {Value<int>? sqlClass, Value<String>? textColumn, Value<int>? rowid}) {
+  WeirdTableCompanion copyWith({Value<int>? sqlClass, Value<String>? textColumn, Value<int>? rowid}) {
     return WeirdTableCompanion(
       sqlClass: sqlClass ?? this.sqlClass,
       textColumn: textColumn ?? this.textColumn,
@@ -1576,27 +1311,17 @@ class MyViewData extends DataClass {
   final DriftAny? configValue;
   final SyncType? syncState;
   final SyncType? syncStateImplicit;
-  const MyViewData(
-      {required this.configKey,
-      this.configValue,
-      this.syncState,
-      this.syncStateImplicit});
-  factory MyViewData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  const MyViewData({required this.configKey, this.configValue, this.syncState, this.syncStateImplicit});
+  factory MyViewData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return MyViewData(
       configKey: serializer.fromJson<String>(json['config_key']),
       configValue: serializer.fromJson<DriftAny?>(json['config_value']),
       syncState: serializer.fromJson<SyncType?>(json['sync_state']),
-      syncStateImplicit: ConfigTable.$convertersyncStateImplicitn
-          .fromJson(serializer.fromJson<int?>(json['sync_state_implicit'])),
+      syncStateImplicit: ConfigTable.$convertersyncStateImplicitn.fromJson(serializer.fromJson<int?>(json['sync_state_implicit'])),
     );
   }
-  factory MyViewData.fromJsonString(String encodedJson,
-          {ValueSerializer? serializer}) =>
-      MyViewData.fromJson(
-          DataClass.parseJson(encodedJson) as Map<String, dynamic>,
-          serializer: serializer);
+  factory MyViewData.fromJsonString(String encodedJson, {ValueSerializer? serializer}) => MyViewData.fromJson(DataClass.parseJson(encodedJson) as Map<String, dynamic>, serializer: serializer);
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
@@ -1604,23 +1329,15 @@ class MyViewData extends DataClass {
       'config_key': serializer.toJson<String>(configKey),
       'config_value': serializer.toJson<DriftAny?>(configValue),
       'sync_state': serializer.toJson<SyncType?>(syncState),
-      'sync_state_implicit': serializer.toJson<int?>(
-          ConfigTable.$convertersyncStateImplicitn.toJson(syncStateImplicit)),
+      'sync_state_implicit': serializer.toJson<int?>(ConfigTable.$convertersyncStateImplicitn.toJson(syncStateImplicit)),
     };
   }
 
-  MyViewData copyWith(
-          {String? configKey,
-          Value<DriftAny?> configValue = const Value.absent(),
-          Value<SyncType?> syncState = const Value.absent(),
-          Value<SyncType?> syncStateImplicit = const Value.absent()}) =>
-      MyViewData(
+  MyViewData copyWith({String? configKey, Value<DriftAny?> configValue = const Value.absent(), Value<SyncType?> syncState = const Value.absent(), Value<SyncType?> syncStateImplicit = const Value.absent()}) => MyViewData(
         configKey: configKey ?? this.configKey,
         configValue: configValue.present ? configValue.value : this.configValue,
         syncState: syncState.present ? syncState.value : this.syncState,
-        syncStateImplicit: syncStateImplicit.present
-            ? syncStateImplicit.value
-            : this.syncStateImplicit,
+        syncStateImplicit: syncStateImplicit.present ? syncStateImplicit.value : this.syncStateImplicit,
       );
   @override
   String toString() {
@@ -1634,16 +1351,11 @@ class MyViewData extends DataClass {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(configKey, configValue, syncState, syncStateImplicit);
+  int get hashCode => Object.hash(configKey, configValue, syncState, syncStateImplicit);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is MyViewData &&
-          other.configKey == this.configKey &&
-          other.configValue == this.configValue &&
-          other.syncState == this.syncState &&
-          other.syncStateImplicit == this.syncStateImplicit);
+      (other is MyViewData && other.configKey == this.configKey && other.configValue == this.configValue && other.syncState == this.syncState && other.syncStateImplicit == this.syncStateImplicit);
 }
 
 class MyView extends ViewInfo<MyView, MyViewData> implements HasResultSet {
@@ -1652,16 +1364,14 @@ class MyView extends ViewInfo<MyView, MyViewData> implements HasResultSet {
   final _$CustomTablesDb attachedDatabase;
   MyView(this.attachedDatabase, [this._alias]);
   @override
-  List<GeneratedColumn> get $columns =>
-      [configKey, configValue, syncState, syncStateImplicit];
+  List<GeneratedColumn> get $columns => [configKey, configValue, syncState, syncStateImplicit];
   @override
-  String get aliasedName => _alias ?? entityName;
+  String get aliasedName => _alias ?? entityColName;
   @override
-  String get entityName => 'my_view';
+  String get entityColName => 'my_view';
   @override
   Map<SqlDialect, String> get createViewStatements => {
-        SqlDialect.sqlite:
-            'CREATE VIEW my_view AS SELECT * FROM config WHERE sync_state = 2',
+        SqlDialect.sqlite: 'CREATE VIEW my_view AS SELECT * FROM config WHERE sync_state = 2',
       };
   @override
   MyView get asDslTable => this;
@@ -1669,34 +1379,18 @@ class MyView extends ViewInfo<MyView, MyViewData> implements HasResultSet {
   MyViewData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return MyViewData(
-      configKey: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}config_key'])!,
-      configValue: attachedDatabase.typeMapping
-          .read(DriftSqlType.any, data['${effectivePrefix}config_value']),
-      syncState: ConfigTable.$convertersyncStaten.fromSql(attachedDatabase
-          .typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}sync_state'])),
-      syncStateImplicit: ConfigTable.$convertersyncStateImplicitn.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.int, data['${effectivePrefix}sync_state_implicit'])),
+      configKey: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}config_key'])!,
+      configValue: attachedDatabase.typeMapping.read(DriftSqlType.any, data['${effectivePrefix}config_value']),
+      syncState: ConfigTable.$convertersyncStaten.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_state'])),
+      syncStateImplicit: ConfigTable.$convertersyncStateImplicitn.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_state_implicit'])),
     );
   }
 
-  late final GeneratedColumn<String> configKey = GeneratedColumn<String>(
-      'config_key', aliasedName, false,
-      type: DriftSqlType.string);
-  late final GeneratedColumn<DriftAny> configValue = GeneratedColumn<DriftAny>(
-      'config_value', aliasedName, true,
-      type: DriftSqlType.any);
-  late final GeneratedColumnWithTypeConverter<SyncType?, int> syncState =
-      GeneratedColumn<int>('sync_state', aliasedName, true,
-              type: DriftSqlType.int)
-          .withConverter<SyncType?>(ConfigTable.$convertersyncStaten);
-  late final GeneratedColumnWithTypeConverter<SyncType?, int>
-      syncStateImplicit = GeneratedColumn<int>(
-              'sync_state_implicit', aliasedName, true,
-              type: DriftSqlType.int)
-          .withConverter<SyncType?>(ConfigTable.$convertersyncStateImplicitn);
+  late final GeneratedColumn<String> configKey = GeneratedColumn<String>('config_key', aliasedName, false, type: DriftSqlType.string);
+  late final GeneratedColumn<DriftAny> configValue = GeneratedColumn<DriftAny>('config_value', aliasedName, true, type: DriftSqlType.any);
+  late final GeneratedColumnWithTypeConverter<SyncType?, int> syncState = GeneratedColumn<int>('sync_state', aliasedName, true, type: DriftSqlType.int).withConverter<SyncType?>(ConfigTable.$convertersyncStaten);
+  late final GeneratedColumnWithTypeConverter<SyncType?, int> syncStateImplicit =
+      GeneratedColumn<int>('sync_state_implicit', aliasedName, true, type: DriftSqlType.int).withConverter<SyncType?>(ConfigTable.$convertersyncStateImplicitn);
   @override
   MyView createAlias(String alias) {
     return MyView(attachedDatabase, alias);
@@ -1715,14 +1409,11 @@ abstract class _$CustomTablesDb extends GeneratedDatabase {
   late final WithDefaults withDefaults = WithDefaults(this);
   late final WithConstraints withConstraints = WithConstraints(this);
   late final ConfigTable config = ConfigTable(this);
-  late final Index valueIdx = Index('value_idx',
-      'CREATE INDEX IF NOT EXISTS value_idx ON config (config_value)');
+  late final Index valueIdx = Index('value_idx', 'CREATE INDEX IF NOT EXISTS value_idx ON config (config_value)');
   late final Mytable mytable = Mytable(this);
   late final Email email = Email(this);
   late final WeirdTable weirdTable = WeirdTable(this);
-  late final Trigger myTrigger = Trigger(
-      'CREATE TRIGGER my_trigger AFTER INSERT ON config BEGIN INSERT INTO with_defaults VALUES (new.config_key, LENGTH(new.config_value));END',
-      'my_trigger');
+  late final Trigger myTrigger = Trigger('CREATE TRIGGER my_trigger AFTER INSERT ON config BEGIN INSERT INTO with_defaults VALUES (new.config_key, LENGTH(new.config_value));END', 'my_trigger');
   late final MyView myView = MyView(this);
   Future<int> writeConfig({required String key, DriftAny? value}) {
     return customInsert(
@@ -1733,89 +1424,65 @@ abstract class _$CustomTablesDb extends GeneratedDatabase {
   }
 
   Selectable<Config> readConfig(String var1) {
-    return customSelect(
-        'SELECT config_key AS ck, config_value AS cf, sync_state AS cs1, sync_state_implicit AS cs2 FROM config WHERE config_key = ?1',
-        variables: [
-          Variable<String>(var1)
-        ],
-        readsFrom: {
-          config,
-        }).asyncMap(
-        (QueryRow row) async => config.mapFromRowWithAlias(row, const {
-              'ck': 'config_key',
-              'cf': 'config_value',
-              'cs1': 'sync_state',
-              'cs2': 'sync_state_implicit',
-            }));
+    return customSelect('SELECT config_key AS ck, config_value AS cf, sync_state AS cs1, sync_state_implicit AS cs2 FROM config WHERE config_key = ?1', variables: [
+      Variable<String>(var1)
+    ], readsFrom: {
+      config,
+    }).asyncMap((QueryRow row) async => config.mapFromRowWithAlias(row, const {
+          'ck': 'config_key',
+          'cf': 'config_value',
+          'cs1': 'sync_state',
+          'cs2': 'sync_state_implicit',
+        }));
   }
 
-  Selectable<Config> readMultiple(List<String> var1,
-      {ReadMultiple$clause? clause}) {
+  Selectable<Config> readMultiple(List<String> var1, {ReadMultiple$clause? clause}) {
     var $arrayStartIndex = 1;
     final expandedvar1 = $expandVar($arrayStartIndex, var1.length);
     $arrayStartIndex += var1.length;
-    final generatedclause = $write(
-        clause?.call(this.config) ?? const OrderBy.nothing(),
-        startIndex: $arrayStartIndex);
+    final generatedclause = $write(clause?.call(this.config) ?? const OrderBy.nothing(), startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedclause.amountOfVariables;
-    return customSelect(
-        'SELECT * FROM config WHERE config_key IN ($expandedvar1) ${generatedclause.sql}',
-        variables: [
-          for (var $ in var1) Variable<String>($),
-          ...generatedclause.introducedVariables
-        ],
-        readsFrom: {
-          config,
-          ...generatedclause.watchedTables,
-        }).asyncMap(config.mapFromRow);
+    return customSelect('SELECT * FROM config WHERE config_key IN ($expandedvar1) ${generatedclause.sql}', variables: [
+      for (var $ in var1) Variable<String>($),
+      ...generatedclause.introducedVariables
+    ], readsFrom: {
+      config,
+      ...generatedclause.watchedTables,
+    }).asyncMap(config.mapFromRow);
   }
 
   Selectable<Config> readDynamic({ReadDynamic$predicate? predicate}) {
     var $arrayStartIndex = 1;
-    final generatedpredicate = $write(
-        predicate?.call(this.config) ?? const CustomExpression('(TRUE)'),
-        startIndex: $arrayStartIndex);
+    final generatedpredicate = $write(predicate?.call(this.config) ?? const CustomExpression('(TRUE)'), startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedpredicate.amountOfVariables;
-    return customSelect('SELECT * FROM config WHERE ${generatedpredicate.sql}',
-        variables: [
-          ...generatedpredicate.introducedVariables
-        ],
-        readsFrom: {
-          config,
-          ...generatedpredicate.watchedTables,
-        }).asyncMap(config.mapFromRow);
+    return customSelect('SELECT * FROM config WHERE ${generatedpredicate.sql}', variables: [
+      ...generatedpredicate.introducedVariables
+    ], readsFrom: {
+      config,
+      ...generatedpredicate.watchedTables,
+    }).asyncMap(config.mapFromRow);
   }
 
-  Selectable<String> typeConverterVar(SyncType? var1, List<SyncType?> var2,
-      {TypeConverterVar$pred? pred}) {
+  Selectable<String> typeConverterVar(SyncType? var1, List<SyncType?> var2, {TypeConverterVar$pred? pred}) {
     var $arrayStartIndex = 2;
-    final generatedpred = $write(
-        pred?.call(this.config) ?? const CustomExpression('(TRUE)'),
-        startIndex: $arrayStartIndex);
+    final generatedpred = $write(pred?.call(this.config) ?? const CustomExpression('(TRUE)'), startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedpred.amountOfVariables;
     final expandedvar2 = $expandVar($arrayStartIndex, var2.length);
     $arrayStartIndex += var2.length;
-    return customSelect(
-        'SELECT config_key FROM config WHERE ${generatedpred.sql} AND(sync_state = ?1 OR sync_state_implicit IN ($expandedvar2))',
-        variables: [
-          Variable<int>(ConfigTable.$convertersyncStaten.toSql(var1)),
-          ...generatedpred.introducedVariables,
-          for (var $ in var2)
-            Variable<int>(ConfigTable.$convertersyncStateImplicitn.toSql($))
-        ],
-        readsFrom: {
-          config,
-          ...generatedpred.watchedTables,
-        }).map((QueryRow row) => row.read<String>('config_key'));
+    return customSelect('SELECT config_key FROM config WHERE ${generatedpred.sql} AND(sync_state = ?1 OR sync_state_implicit IN ($expandedvar2))', variables: [
+      Variable<int>(ConfigTable.$convertersyncStaten.toSql(var1)),
+      ...generatedpred.introducedVariables,
+      for (var $ in var2) Variable<int>(ConfigTable.$convertersyncStateImplicitn.toSql($))
+    ], readsFrom: {
+      config,
+      ...generatedpred.watchedTables,
+    }).map((QueryRow row) => row.read<String>('config_key'));
   }
 
   Selectable<JsonResult> tableValued() {
-    return customSelect(
-        'SELECT "key", value FROM config,json_each(config.config_value)WHERE json_valid(config_value)',
-        variables: [],
-        readsFrom: {
-          config,
-        }).map((QueryRow row) => JsonResult(
+    return customSelect('SELECT "key", value FROM config,json_each(config.config_value)WHERE json_valid(config_value)', variables: [], readsFrom: {
+      config,
+    }).map((QueryRow row) => JsonResult(
           row: row,
           key: row.read<String>('key'),
           value: row.readNullable<String>('value'),
@@ -1823,21 +1490,16 @@ abstract class _$CustomTablesDb extends GeneratedDatabase {
   }
 
   Selectable<JsonResult> another() {
-    return customSelect('SELECT \'one\' AS "key", NULLIF(\'two\', \'another\') AS value', variables: [], readsFrom: {})
-        .map((QueryRow row) => JsonResult(
-              row: row,
-              key: row.read<String>('key'),
-              value: row.readNullable<String>('value'),
-            ));
+    return customSelect('SELECT \'one\' AS "key", NULLIF(\'two\', \'another\') AS value', variables: [], readsFrom: {}).map((QueryRow row) => JsonResult(
+          row: row,
+          key: row.read<String>('key'),
+          value: row.readNullable<String>('value'),
+        ));
   }
 
   Selectable<MultipleResult> multiple({required Multiple$predicate predicate}) {
     var $arrayStartIndex = 1;
-    final generatedpredicate = $write(
-        predicate(
-            alias(this.withDefaults, 'd'), alias(this.withConstraints, 'c')),
-        hasMultipleTables: true,
-        startIndex: $arrayStartIndex);
+    final generatedpredicate = $write(predicate(alias(this.withDefaults, 'd'), alias(this.withConstraints, 'c')), hasMultipleTables: true, startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedpredicate.amountOfVariables;
     return customSelect(
         'SELECT d.*,"c"."a" AS "nested_0.a", "c"."b" AS "nested_0.b", "c"."c" AS "nested_0.c" FROM with_defaults AS d LEFT OUTER JOIN with_constraints AS c ON d.a = c.a AND d.b = c.b WHERE ${generatedpredicate.sql}',
@@ -1852,113 +1514,81 @@ abstract class _$CustomTablesDb extends GeneratedDatabase {
           row: row,
           a: row.readNullableWithType<String>(const CustomTextType(), 'a'),
           b: row.readNullable<int>('b'),
-          c: await withConstraints.mapFromRowOrNull(row,
-              tablePrefix: 'nested_0'),
+          c: await withConstraints.mapFromRowOrNull(row, tablePrefix: 'nested_0'),
         ));
   }
 
   Selectable<EMail> searchEmails({required String? term}) {
-    return customSelect(
-        'SELECT * FROM email WHERE email MATCH ?1 ORDER BY rank',
-        variables: [
-          Variable<String>(term)
-        ],
-        readsFrom: {
-          email,
-        }).asyncMap(email.mapFromRow);
+    return customSelect('SELECT * FROM email WHERE email MATCH ?1 ORDER BY rank', variables: [
+      Variable<String>(term)
+    ], readsFrom: {
+      email,
+    }).asyncMap(email.mapFromRow);
   }
 
   Selectable<ReadRowIdResult> readRowId({required ReadRowId$expr expr}) {
     var $arrayStartIndex = 1;
-    final generatedexpr =
-        $write(expr(this.config), startIndex: $arrayStartIndex);
+    final generatedexpr = $write(expr(this.config), startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedexpr.amountOfVariables;
-    return customSelect(
-        'SELECT oid, * FROM config WHERE _rowid_ = ${generatedexpr.sql}',
-        variables: [
-          ...generatedexpr.introducedVariables
-        ],
-        readsFrom: {
-          config,
-          ...generatedexpr.watchedTables,
-        }).map((QueryRow row) => ReadRowIdResult(
+    return customSelect('SELECT oid, * FROM config WHERE _rowid_ = ${generatedexpr.sql}', variables: [
+      ...generatedexpr.introducedVariables
+    ], readsFrom: {
+      config,
+      ...generatedexpr.watchedTables,
+    }).map((QueryRow row) => ReadRowIdResult(
           row: row,
           rowid: row.read<int>('rowid'),
           configKey: row.read<String>('config_key'),
           configValue: row.readNullable<DriftAny>('config_value'),
-          syncState: NullAwareTypeConverter.wrapFromSql(
-              ConfigTable.$convertersyncState,
-              row.readNullable<int>('sync_state')),
-          syncStateImplicit: NullAwareTypeConverter.wrapFromSql(
-              ConfigTable.$convertersyncStateImplicit,
-              row.readNullable<int>('sync_state_implicit')),
+          syncState: NullAwareTypeConverter.wrapFromSql(ConfigTable.$convertersyncState, row.readNullable<int>('sync_state')),
+          syncStateImplicit: NullAwareTypeConverter.wrapFromSql(ConfigTable.$convertersyncStateImplicit, row.readNullable<int>('sync_state_implicit')),
         ));
   }
 
   Selectable<MyViewData> readView({ReadView$where? where}) {
     var $arrayStartIndex = 1;
-    final generatedwhere = $write(
-        where?.call(this.myView) ?? const CustomExpression('(TRUE)'),
-        startIndex: $arrayStartIndex);
+    final generatedwhere = $write(where?.call(this.myView) ?? const CustomExpression('(TRUE)'), startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedwhere.amountOfVariables;
-    return customSelect('SELECT * FROM my_view WHERE ${generatedwhere.sql}',
-        variables: [
-          ...generatedwhere.introducedVariables
-        ],
-        readsFrom: {
-          config,
-          ...generatedwhere.watchedTables,
-        }).asyncMap(myView.mapFromRow);
+    return customSelect('SELECT * FROM my_view WHERE ${generatedwhere.sql}', variables: [
+      ...generatedwhere.introducedVariables
+    ], readsFrom: {
+      config,
+      ...generatedwhere.watchedTables,
+    }).asyncMap(myView.mapFromRow);
   }
 
   Selectable<int> cfeTest() {
-    return customSelect(
-        'WITH RECURSIVE cnt (x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM cnt LIMIT 1000000) SELECT x FROM cnt',
-        variables: [],
-        readsFrom: {}).map((QueryRow row) => row.read<int>('x'));
+    return customSelect('WITH RECURSIVE cnt (x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM cnt LIMIT 1000000) SELECT x FROM cnt', variables: [], readsFrom: {}).map((QueryRow row) => row.read<int>('x'));
   }
 
   Selectable<int?> nullableQuery() {
-    return customSelect('SELECT MAX(oid) AS _c0 FROM config',
-        variables: [],
-        readsFrom: {
-          config,
-        }).map((QueryRow row) => row.readNullable<int>('_c0'));
+    return customSelect('SELECT MAX(oid) AS _c0 FROM config', variables: [], readsFrom: {
+      config,
+    }).map((QueryRow row) => row.readNullable<int>('_c0'));
   }
 
   Future<List<Config>> addConfig({required Insertable<Config> value}) {
     var $arrayStartIndex = 1;
-    final generatedvalue =
-        $writeInsertable(this.config, value, startIndex: $arrayStartIndex);
+    final generatedvalue = $writeInsertable(this.config, value, startIndex: $arrayStartIndex);
     $arrayStartIndex += generatedvalue.amountOfVariables;
-    return customWriteReturning(
-            'INSERT INTO config ${generatedvalue.sql} RETURNING *',
-            variables: [...generatedvalue.introducedVariables],
-            updates: {config})
-        .then((rows) => Future.wait(rows.map(config.mapFromRow)));
+    return customWriteReturning('INSERT INTO config ${generatedvalue.sql} RETURNING *', variables: [...generatedvalue.introducedVariables], updates: {config}).then((rows) => Future.wait(rows.map(config.mapFromRow)));
   }
 
   Selectable<NestedResult> nested(String? var1) {
-    return customSelect(
-        'SELECT"defaults"."a" AS "nested_0.a", "defaults"."b" AS "nested_0.b", defaults.b AS "\$n_0" FROM with_defaults AS defaults WHERE a = ?1',
-        variables: [
-          Variable<String>(var1, const CustomTextType())
-        ],
-        readsFrom: {
-          withConstraints,
-          withDefaults,
-        }).asyncMap((QueryRow row) async => NestedResult(
+    return customSelect('SELECT"defaults"."a" AS "nested_0.a", "defaults"."b" AS "nested_0.b", defaults.b AS "\$n_0" FROM with_defaults AS defaults WHERE a = ?1', variables: [
+      Variable<String>(var1, const CustomTextType())
+    ], readsFrom: {
+      withConstraints,
+      withDefaults,
+    }).asyncMap((QueryRow row) async => NestedResult(
           row: row,
           defaults: await withDefaults.mapFromRow(row, tablePrefix: 'nested_0'),
-          nestedQuery1: await customSelect(
-              'SELECT * FROM with_constraints AS c WHERE c.b = ?1',
-              variables: [
-                Variable<int>(row.read('\$n_0'))
-              ],
-              readsFrom: {
-                withConstraints,
-                withDefaults,
-              }).asyncMap(withConstraints.mapFromRow).get(),
+          nestedQuery1: await customSelect('SELECT * FROM with_constraints AS c WHERE c.b = ?1', variables: [
+            Variable<int>(row.read('\$n_0'))
+          ], readsFrom: {
+            withConstraints,
+            withDefaults,
+          }).asyncMap(withConstraints.mapFromRow).get(),
         ));
   }
 
@@ -1972,16 +1602,12 @@ abstract class _$CustomTablesDb extends GeneratedDatabase {
           noIds,
         }).asyncMap((QueryRow row) async => MyCustomResultClass(
           row.read<int>('b'),
-          syncState: NullAwareTypeConverter.wrapFromSql(
-              ConfigTable.$convertersyncState,
-              row.readNullable<int>('sync_state')),
+          syncState: NullAwareTypeConverter.wrapFromSql(ConfigTable.$convertersyncState, row.readNullable<int>('sync_state')),
           config: await config.mapFromRow(row, tablePrefix: 'nested_0'),
           noIds: await noIds.mapFromRow(row, tablePrefix: 'nested_1'),
-          nested: await customSelect('SELECT * FROM no_ids',
-                  variables: [],
-                  readsFrom: {
-                noIds,
-              })
+          nested: await customSelect('SELECT * FROM no_ids', variables: [], readsFrom: {
+            noIds,
+          })
               .map((QueryRow row) => Buffer(
                     row.read<Uint8List>('payload'),
                   ))
@@ -1990,29 +1616,15 @@ abstract class _$CustomTablesDb extends GeneratedDatabase {
   }
 
   @override
-  Iterable<TableInfo<Table, Object?>> get allTables =>
-      allSchemaEntities.whereType<TableInfo<Table, Object?>>();
+  Iterable<TableInfo<Table, Object?>> get allTables => allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [
-        noIds,
-        withDefaults,
-        withConstraints,
-        config,
-        valueIdx,
-        mytable,
-        email,
-        weirdTable,
-        myTrigger,
-        myView,
-        OnCreateQuery(
-            'INSERT INTO config (config_key, config_value) VALUES (\'key\', \'values\')')
-      ];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [noIds, withDefaults, withConstraints, config, valueIdx, mytable, email, weirdTable, myTrigger, myView, OnCreateQuery('INSERT INTO config (config_key, config_value) VALUES (\'key\', \'values\')')];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
         [
           WritePropagation(
-            on: TableUpdateQuery.onTableName('config',
-                limitUpdateKind: UpdateKind.insert),
+            on: TableUpdateQuery.onTableName('config', limitUpdateKind: UpdateKind.insert),
             result: [
               TableUpdate('with_defaults', kind: UpdateKind.insert),
             ],
@@ -2020,8 +1632,7 @@ abstract class _$CustomTablesDb extends GeneratedDatabase {
         ],
       );
   @override
-  DriftDatabaseOptions get options =>
-      const DriftDatabaseOptions(storeDateTimeAsText: true);
+  DriftDatabaseOptions get options => const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
 typedef $NoIdsInsertCompanionBuilder = NoIdsCompanion Function({
@@ -2031,15 +1642,7 @@ typedef $NoIdsUpdateCompanionBuilder = NoIdsCompanion Function({
   Value<Uint8List> payload,
 });
 
-class $NoIdsTableManager extends RootTableManager<
-    _$CustomTablesDb,
-    NoIds,
-    NoIdRow,
-    $NoIdsFilterComposer,
-    $NoIdsOrderingComposer,
-    $NoIdsProcessedTableManager,
-    $NoIdsInsertCompanionBuilder,
-    $NoIdsUpdateCompanionBuilder> {
+class $NoIdsTableManager extends RootTableManager<_$CustomTablesDb, NoIds, NoIdRow, $NoIdsFilterComposer, $NoIdsOrderingComposer, $NoIdsProcessedTableManager, $NoIdsInsertCompanionBuilder, $NoIdsUpdateCompanionBuilder> {
   $NoIdsTableManager(_$CustomTablesDb db, NoIds table)
       : super(TableManagerState(
           db: db,
@@ -2062,32 +1665,19 @@ class $NoIdsTableManager extends RootTableManager<
         ));
 }
 
-class $NoIdsProcessedTableManager extends ProcessedTableManager<
-    _$CustomTablesDb,
-    NoIds,
-    NoIdRow,
-    $NoIdsFilterComposer,
-    $NoIdsOrderingComposer,
-    $NoIdsProcessedTableManager,
-    $NoIdsInsertCompanionBuilder,
-    $NoIdsUpdateCompanionBuilder> {
+class $NoIdsProcessedTableManager
+    extends ProcessedTableManager<_$CustomTablesDb, NoIds, NoIdRow, $NoIdsFilterComposer, $NoIdsOrderingComposer, $NoIdsProcessedTableManager, $NoIdsInsertCompanionBuilder, $NoIdsUpdateCompanionBuilder> {
   $NoIdsProcessedTableManager(super.$state);
 }
 
 class $NoIdsFilterComposer extends FilterComposer<_$CustomTablesDb, NoIds> {
   $NoIdsFilterComposer(super.$state);
-  ColumnFilters<Uint8List> get payload => $state.composableBuilder(
-      column: $state.table.payload,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<Uint8List> get payload => $state.composableBuilder(column: $state.table.payload, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $NoIdsOrderingComposer extends OrderingComposer<_$CustomTablesDb, NoIds> {
   $NoIdsOrderingComposer(super.$state);
-  ColumnOrderings<Uint8List> get payload => $state.composableBuilder(
-      column: $state.table.payload,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<Uint8List> get payload => $state.composableBuilder(column: $state.table.payload, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $WithDefaultsInsertCompanionBuilder = WithDefaultsCompanion Function({
@@ -2101,23 +1691,14 @@ typedef $WithDefaultsUpdateCompanionBuilder = WithDefaultsCompanion Function({
   Value<int> rowid,
 });
 
-class $WithDefaultsTableManager extends RootTableManager<
-    _$CustomTablesDb,
-    WithDefaults,
-    WithDefault,
-    $WithDefaultsFilterComposer,
-    $WithDefaultsOrderingComposer,
-    $WithDefaultsProcessedTableManager,
-    $WithDefaultsInsertCompanionBuilder,
-    $WithDefaultsUpdateCompanionBuilder> {
+class $WithDefaultsTableManager extends RootTableManager<_$CustomTablesDb, WithDefaults, WithDefault, $WithDefaultsFilterComposer, $WithDefaultsOrderingComposer, $WithDefaultsProcessedTableManager,
+    $WithDefaultsInsertCompanionBuilder, $WithDefaultsUpdateCompanionBuilder> {
   $WithDefaultsTableManager(_$CustomTablesDb db, WithDefaults table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $WithDefaultsFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $WithDefaultsOrderingComposer(ComposerState(db, table)),
+          filteringComposer: $WithDefaultsFilterComposer(ComposerState(db, table)),
+          orderingComposer: $WithDefaultsOrderingComposer(ComposerState(db, table)),
           getChildManagerBuilder: (p) => $WithDefaultsProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<String?> a = const Value.absent(),
@@ -2142,80 +1723,47 @@ class $WithDefaultsTableManager extends RootTableManager<
         ));
 }
 
-class $WithDefaultsProcessedTableManager extends ProcessedTableManager<
-    _$CustomTablesDb,
-    WithDefaults,
-    WithDefault,
-    $WithDefaultsFilterComposer,
-    $WithDefaultsOrderingComposer,
-    $WithDefaultsProcessedTableManager,
-    $WithDefaultsInsertCompanionBuilder,
-    $WithDefaultsUpdateCompanionBuilder> {
+class $WithDefaultsProcessedTableManager extends ProcessedTableManager<_$CustomTablesDb, WithDefaults, WithDefault, $WithDefaultsFilterComposer, $WithDefaultsOrderingComposer, $WithDefaultsProcessedTableManager,
+    $WithDefaultsInsertCompanionBuilder, $WithDefaultsUpdateCompanionBuilder> {
   $WithDefaultsProcessedTableManager(super.$state);
 }
 
-class $WithDefaultsFilterComposer
-    extends FilterComposer<_$CustomTablesDb, WithDefaults> {
+class $WithDefaultsFilterComposer extends FilterComposer<_$CustomTablesDb, WithDefaults> {
   $WithDefaultsFilterComposer(super.$state);
-  ColumnFilters<String> get a => $state.composableBuilder(
-      column: $state.table.a,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get a => $state.composableBuilder(column: $state.table.a, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get b => $state.composableBuilder(
-      column: $state.table.b,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get b => $state.composableBuilder(column: $state.table.b, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $WithDefaultsOrderingComposer
-    extends OrderingComposer<_$CustomTablesDb, WithDefaults> {
+class $WithDefaultsOrderingComposer extends OrderingComposer<_$CustomTablesDb, WithDefaults> {
   $WithDefaultsOrderingComposer(super.$state);
-  ColumnOrderings<String> get a => $state.composableBuilder(
-      column: $state.table.a,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get a => $state.composableBuilder(column: $state.table.a, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get b => $state.composableBuilder(
-      column: $state.table.b,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get b => $state.composableBuilder(column: $state.table.b, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
-typedef $WithConstraintsInsertCompanionBuilder = WithConstraintsCompanion
-    Function({
+typedef $WithConstraintsInsertCompanionBuilder = WithConstraintsCompanion Function({
   Value<String?> a,
   required int b,
   Value<double?> c,
   Value<int> rowid,
 });
-typedef $WithConstraintsUpdateCompanionBuilder = WithConstraintsCompanion
-    Function({
+typedef $WithConstraintsUpdateCompanionBuilder = WithConstraintsCompanion Function({
   Value<String?> a,
   Value<int> b,
   Value<double?> c,
   Value<int> rowid,
 });
 
-class $WithConstraintsTableManager extends RootTableManager<
-    _$CustomTablesDb,
-    WithConstraints,
-    WithConstraint,
-    $WithConstraintsFilterComposer,
-    $WithConstraintsOrderingComposer,
-    $WithConstraintsProcessedTableManager,
-    $WithConstraintsInsertCompanionBuilder,
-    $WithConstraintsUpdateCompanionBuilder> {
+class $WithConstraintsTableManager extends RootTableManager<_$CustomTablesDb, WithConstraints, WithConstraint, $WithConstraintsFilterComposer, $WithConstraintsOrderingComposer, $WithConstraintsProcessedTableManager,
+    $WithConstraintsInsertCompanionBuilder, $WithConstraintsUpdateCompanionBuilder> {
   $WithConstraintsTableManager(_$CustomTablesDb db, WithConstraints table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $WithConstraintsFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $WithConstraintsOrderingComposer(ComposerState(db, table)),
-          getChildManagerBuilder: (p) =>
-              $WithConstraintsProcessedTableManager(p),
+          filteringComposer: $WithConstraintsFilterComposer(ComposerState(db, table)),
+          orderingComposer: $WithConstraintsOrderingComposer(ComposerState(db, table)),
+          getChildManagerBuilder: (p) => $WithConstraintsProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<String?> a = const Value.absent(),
             Value<int> b = const Value.absent(),
@@ -2243,54 +1791,27 @@ class $WithConstraintsTableManager extends RootTableManager<
         ));
 }
 
-class $WithConstraintsProcessedTableManager extends ProcessedTableManager<
-    _$CustomTablesDb,
-    WithConstraints,
-    WithConstraint,
-    $WithConstraintsFilterComposer,
-    $WithConstraintsOrderingComposer,
-    $WithConstraintsProcessedTableManager,
-    $WithConstraintsInsertCompanionBuilder,
-    $WithConstraintsUpdateCompanionBuilder> {
+class $WithConstraintsProcessedTableManager extends ProcessedTableManager<_$CustomTablesDb, WithConstraints, WithConstraint, $WithConstraintsFilterComposer, $WithConstraintsOrderingComposer,
+    $WithConstraintsProcessedTableManager, $WithConstraintsInsertCompanionBuilder, $WithConstraintsUpdateCompanionBuilder> {
   $WithConstraintsProcessedTableManager(super.$state);
 }
 
-class $WithConstraintsFilterComposer
-    extends FilterComposer<_$CustomTablesDb, WithConstraints> {
+class $WithConstraintsFilterComposer extends FilterComposer<_$CustomTablesDb, WithConstraints> {
   $WithConstraintsFilterComposer(super.$state);
-  ColumnFilters<String> get a => $state.composableBuilder(
-      column: $state.table.a,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get a => $state.composableBuilder(column: $state.table.a, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<int> get b => $state.composableBuilder(
-      column: $state.table.b,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get b => $state.composableBuilder(column: $state.table.b, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<double> get c => $state.composableBuilder(
-      column: $state.table.c,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<double> get c => $state.composableBuilder(column: $state.table.c, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $WithConstraintsOrderingComposer
-    extends OrderingComposer<_$CustomTablesDb, WithConstraints> {
+class $WithConstraintsOrderingComposer extends OrderingComposer<_$CustomTablesDb, WithConstraints> {
   $WithConstraintsOrderingComposer(super.$state);
-  ColumnOrderings<String> get a => $state.composableBuilder(
-      column: $state.table.a,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get a => $state.composableBuilder(column: $state.table.a, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get b => $state.composableBuilder(
-      column: $state.table.b,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get b => $state.composableBuilder(column: $state.table.b, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<double> get c => $state.composableBuilder(
-      column: $state.table.c,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<double> get c => $state.composableBuilder(column: $state.table.c, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $ConfigTableInsertCompanionBuilder = ConfigCompanion Function({
@@ -2308,23 +1829,14 @@ typedef $ConfigTableUpdateCompanionBuilder = ConfigCompanion Function({
   Value<int> rowid,
 });
 
-class $ConfigTableTableManager extends RootTableManager<
-    _$CustomTablesDb,
-    ConfigTable,
-    Config,
-    $ConfigTableFilterComposer,
-    $ConfigTableOrderingComposer,
-    $ConfigTableProcessedTableManager,
-    $ConfigTableInsertCompanionBuilder,
-    $ConfigTableUpdateCompanionBuilder> {
+class $ConfigTableTableManager extends RootTableManager<_$CustomTablesDb, ConfigTable, Config, $ConfigTableFilterComposer, $ConfigTableOrderingComposer, $ConfigTableProcessedTableManager,
+    $ConfigTableInsertCompanionBuilder, $ConfigTableUpdateCompanionBuilder> {
   $ConfigTableTableManager(_$CustomTablesDb db, ConfigTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $ConfigTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $ConfigTableOrderingComposer(ComposerState(db, table)),
+          filteringComposer: $ConfigTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $ConfigTableOrderingComposer(ComposerState(db, table)),
           getChildManagerBuilder: (p) => $ConfigTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<String> configKey = const Value.absent(),
@@ -2357,68 +1869,33 @@ class $ConfigTableTableManager extends RootTableManager<
         ));
 }
 
-class $ConfigTableProcessedTableManager extends ProcessedTableManager<
-    _$CustomTablesDb,
-    ConfigTable,
-    Config,
-    $ConfigTableFilterComposer,
-    $ConfigTableOrderingComposer,
-    $ConfigTableProcessedTableManager,
-    $ConfigTableInsertCompanionBuilder,
-    $ConfigTableUpdateCompanionBuilder> {
+class $ConfigTableProcessedTableManager extends ProcessedTableManager<_$CustomTablesDb, ConfigTable, Config, $ConfigTableFilterComposer, $ConfigTableOrderingComposer, $ConfigTableProcessedTableManager,
+    $ConfigTableInsertCompanionBuilder, $ConfigTableUpdateCompanionBuilder> {
   $ConfigTableProcessedTableManager(super.$state);
 }
 
-class $ConfigTableFilterComposer
-    extends FilterComposer<_$CustomTablesDb, ConfigTable> {
+class $ConfigTableFilterComposer extends FilterComposer<_$CustomTablesDb, ConfigTable> {
   $ConfigTableFilterComposer(super.$state);
-  ColumnFilters<String> get configKey => $state.composableBuilder(
-      column: $state.table.configKey,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get configKey => $state.composableBuilder(column: $state.table.configKey, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<DriftAny> get configValue => $state.composableBuilder(
-      column: $state.table.configValue,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DriftAny> get configValue => $state.composableBuilder(column: $state.table.configValue, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
   ColumnWithTypeConverterFilters<SyncType?, SyncType, int> get syncState =>
-      $state.composableBuilder(
-          column: $state.table.syncState,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
+      $state.composableBuilder(column: $state.table.syncState, builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(column, joinBuilders: joinBuilders));
 
-  ColumnWithTypeConverterFilters<SyncType?, SyncType, int>
-      get syncStateImplicit => $state.composableBuilder(
-          column: $state.table.syncStateImplicit,
-          builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(
-              column,
-              joinBuilders: joinBuilders));
+  ColumnWithTypeConverterFilters<SyncType?, SyncType, int> get syncStateImplicit =>
+      $state.composableBuilder(column: $state.table.syncStateImplicit, builder: (column, joinBuilders) => ColumnWithTypeConverterFilters(column, joinBuilders: joinBuilders));
 }
 
-class $ConfigTableOrderingComposer
-    extends OrderingComposer<_$CustomTablesDb, ConfigTable> {
+class $ConfigTableOrderingComposer extends OrderingComposer<_$CustomTablesDb, ConfigTable> {
   $ConfigTableOrderingComposer(super.$state);
-  ColumnOrderings<String> get configKey => $state.composableBuilder(
-      column: $state.table.configKey,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get configKey => $state.composableBuilder(column: $state.table.configKey, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<DriftAny> get configValue => $state.composableBuilder(
-      column: $state.table.configValue,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DriftAny> get configValue => $state.composableBuilder(column: $state.table.configValue, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get syncState => $state.composableBuilder(
-      column: $state.table.syncState,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get syncState => $state.composableBuilder(column: $state.table.syncState, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<int> get syncStateImplicit => $state.composableBuilder(
-      column: $state.table.syncStateImplicit,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get syncStateImplicit => $state.composableBuilder(column: $state.table.syncStateImplicit, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $MytableInsertCompanionBuilder = MytableCompanion Function({
@@ -2434,15 +1911,8 @@ typedef $MytableUpdateCompanionBuilder = MytableCompanion Function({
   Value<DateTime?> somedate,
 });
 
-class $MytableTableManager extends RootTableManager<
-    _$CustomTablesDb,
-    Mytable,
-    MytableData,
-    $MytableFilterComposer,
-    $MytableOrderingComposer,
-    $MytableProcessedTableManager,
-    $MytableInsertCompanionBuilder,
-    $MytableUpdateCompanionBuilder> {
+class $MytableTableManager
+    extends RootTableManager<_$CustomTablesDb, Mytable, MytableData, $MytableFilterComposer, $MytableOrderingComposer, $MytableProcessedTableManager, $MytableInsertCompanionBuilder, $MytableUpdateCompanionBuilder> {
   $MytableTableManager(_$CustomTablesDb db, Mytable table)
       : super(TableManagerState(
           db: db,
@@ -2477,63 +1947,31 @@ class $MytableTableManager extends RootTableManager<
         ));
 }
 
-class $MytableProcessedTableManager extends ProcessedTableManager<
-    _$CustomTablesDb,
-    Mytable,
-    MytableData,
-    $MytableFilterComposer,
-    $MytableOrderingComposer,
-    $MytableProcessedTableManager,
-    $MytableInsertCompanionBuilder,
-    $MytableUpdateCompanionBuilder> {
+class $MytableProcessedTableManager
+    extends ProcessedTableManager<_$CustomTablesDb, Mytable, MytableData, $MytableFilterComposer, $MytableOrderingComposer, $MytableProcessedTableManager, $MytableInsertCompanionBuilder, $MytableUpdateCompanionBuilder> {
   $MytableProcessedTableManager(super.$state);
 }
 
 class $MytableFilterComposer extends FilterComposer<_$CustomTablesDb, Mytable> {
   $MytableFilterComposer(super.$state);
-  ColumnFilters<int> get someid => $state.composableBuilder(
-      column: $state.table.someid,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get someid => $state.composableBuilder(column: $state.table.someid, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get sometext => $state.composableBuilder(
-      column: $state.table.sometext,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get sometext => $state.composableBuilder(column: $state.table.sometext, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<bool> get isInserting => $state.composableBuilder(
-      column: $state.table.isInserting,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<bool> get isInserting => $state.composableBuilder(column: $state.table.isInserting, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<DateTime> get somedate => $state.composableBuilder(
-      column: $state.table.somedate,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<DateTime> get somedate => $state.composableBuilder(column: $state.table.somedate, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $MytableOrderingComposer
-    extends OrderingComposer<_$CustomTablesDb, Mytable> {
+class $MytableOrderingComposer extends OrderingComposer<_$CustomTablesDb, Mytable> {
   $MytableOrderingComposer(super.$state);
-  ColumnOrderings<int> get someid => $state.composableBuilder(
-      column: $state.table.someid,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get someid => $state.composableBuilder(column: $state.table.someid, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get sometext => $state.composableBuilder(
-      column: $state.table.sometext,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get sometext => $state.composableBuilder(column: $state.table.sometext, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<bool> get isInserting => $state.composableBuilder(
-      column: $state.table.isInserting,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<bool> get isInserting => $state.composableBuilder(column: $state.table.isInserting, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<DateTime> get somedate => $state.composableBuilder(
-      column: $state.table.somedate,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<DateTime> get somedate => $state.composableBuilder(column: $state.table.somedate, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $EmailInsertCompanionBuilder = EmailCompanion Function({
@@ -2549,15 +1987,7 @@ typedef $EmailUpdateCompanionBuilder = EmailCompanion Function({
   Value<int> rowid,
 });
 
-class $EmailTableManager extends RootTableManager<
-    _$CustomTablesDb,
-    Email,
-    EMail,
-    $EmailFilterComposer,
-    $EmailOrderingComposer,
-    $EmailProcessedTableManager,
-    $EmailInsertCompanionBuilder,
-    $EmailUpdateCompanionBuilder> {
+class $EmailTableManager extends RootTableManager<_$CustomTablesDb, Email, EMail, $EmailFilterComposer, $EmailOrderingComposer, $EmailProcessedTableManager, $EmailInsertCompanionBuilder, $EmailUpdateCompanionBuilder> {
   $EmailTableManager(_$CustomTablesDb db, Email table)
       : super(TableManagerState(
           db: db,
@@ -2592,52 +2022,27 @@ class $EmailTableManager extends RootTableManager<
         ));
 }
 
-class $EmailProcessedTableManager extends ProcessedTableManager<
-    _$CustomTablesDb,
-    Email,
-    EMail,
-    $EmailFilterComposer,
-    $EmailOrderingComposer,
-    $EmailProcessedTableManager,
-    $EmailInsertCompanionBuilder,
-    $EmailUpdateCompanionBuilder> {
+class $EmailProcessedTableManager
+    extends ProcessedTableManager<_$CustomTablesDb, Email, EMail, $EmailFilterComposer, $EmailOrderingComposer, $EmailProcessedTableManager, $EmailInsertCompanionBuilder, $EmailUpdateCompanionBuilder> {
   $EmailProcessedTableManager(super.$state);
 }
 
 class $EmailFilterComposer extends FilterComposer<_$CustomTablesDb, Email> {
   $EmailFilterComposer(super.$state);
-  ColumnFilters<String> get sender => $state.composableBuilder(
-      column: $state.table.sender,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get sender => $state.composableBuilder(column: $state.table.sender, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get title => $state.composableBuilder(
-      column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get title => $state.composableBuilder(column: $state.table.title, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get body => $state.composableBuilder(
-      column: $state.table.body,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get body => $state.composableBuilder(column: $state.table.body, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
 class $EmailOrderingComposer extends OrderingComposer<_$CustomTablesDb, Email> {
   $EmailOrderingComposer(super.$state);
-  ColumnOrderings<String> get sender => $state.composableBuilder(
-      column: $state.table.sender,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get sender => $state.composableBuilder(column: $state.table.sender, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get title => $state.composableBuilder(
-      column: $state.table.title,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get title => $state.composableBuilder(column: $state.table.title, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get body => $state.composableBuilder(
-      column: $state.table.body,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get body => $state.composableBuilder(column: $state.table.body, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 typedef $WeirdTableInsertCompanionBuilder = WeirdTableCompanion Function({
@@ -2651,23 +2056,14 @@ typedef $WeirdTableUpdateCompanionBuilder = WeirdTableCompanion Function({
   Value<int> rowid,
 });
 
-class $WeirdTableTableManager extends RootTableManager<
-    _$CustomTablesDb,
-    WeirdTable,
-    WeirdData,
-    $WeirdTableFilterComposer,
-    $WeirdTableOrderingComposer,
-    $WeirdTableProcessedTableManager,
-    $WeirdTableInsertCompanionBuilder,
+class $WeirdTableTableManager extends RootTableManager<_$CustomTablesDb, WeirdTable, WeirdData, $WeirdTableFilterComposer, $WeirdTableOrderingComposer, $WeirdTableProcessedTableManager, $WeirdTableInsertCompanionBuilder,
     $WeirdTableUpdateCompanionBuilder> {
   $WeirdTableTableManager(_$CustomTablesDb db, WeirdTable table)
       : super(TableManagerState(
           db: db,
           table: table,
-          filteringComposer:
-              $WeirdTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $WeirdTableOrderingComposer(ComposerState(db, table)),
+          filteringComposer: $WeirdTableFilterComposer(ComposerState(db, table)),
+          orderingComposer: $WeirdTableOrderingComposer(ComposerState(db, table)),
           getChildManagerBuilder: (p) => $WeirdTableProcessedTableManager(p),
           getUpdateCompanionBuilder: ({
             Value<int> sqlClass = const Value.absent(),
@@ -2692,60 +2088,35 @@ class $WeirdTableTableManager extends RootTableManager<
         ));
 }
 
-class $WeirdTableProcessedTableManager extends ProcessedTableManager<
-    _$CustomTablesDb,
-    WeirdTable,
-    WeirdData,
-    $WeirdTableFilterComposer,
-    $WeirdTableOrderingComposer,
-    $WeirdTableProcessedTableManager,
-    $WeirdTableInsertCompanionBuilder,
-    $WeirdTableUpdateCompanionBuilder> {
+class $WeirdTableProcessedTableManager extends ProcessedTableManager<_$CustomTablesDb, WeirdTable, WeirdData, $WeirdTableFilterComposer, $WeirdTableOrderingComposer, $WeirdTableProcessedTableManager,
+    $WeirdTableInsertCompanionBuilder, $WeirdTableUpdateCompanionBuilder> {
   $WeirdTableProcessedTableManager(super.$state);
 }
 
-class $WeirdTableFilterComposer
-    extends FilterComposer<_$CustomTablesDb, WeirdTable> {
+class $WeirdTableFilterComposer extends FilterComposer<_$CustomTablesDb, WeirdTable> {
   $WeirdTableFilterComposer(super.$state);
-  ColumnFilters<int> get sqlClass => $state.composableBuilder(
-      column: $state.table.sqlClass,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<int> get sqlClass => $state.composableBuilder(column: $state.table.sqlClass, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 
-  ColumnFilters<String> get textColumn => $state.composableBuilder(
-      column: $state.table.textColumn,
-      builder: (column, joinBuilders) =>
-          ColumnFilters(column, joinBuilders: joinBuilders));
+  ColumnFilters<String> get textColumn => $state.composableBuilder(column: $state.table.textColumn, builder: (column, joinBuilders) => ColumnFilters(column, joinBuilders: joinBuilders));
 }
 
-class $WeirdTableOrderingComposer
-    extends OrderingComposer<_$CustomTablesDb, WeirdTable> {
+class $WeirdTableOrderingComposer extends OrderingComposer<_$CustomTablesDb, WeirdTable> {
   $WeirdTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get sqlClass => $state.composableBuilder(
-      column: $state.table.sqlClass,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<int> get sqlClass => $state.composableBuilder(column: $state.table.sqlClass, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 
-  ColumnOrderings<String> get textColumn => $state.composableBuilder(
-      column: $state.table.textColumn,
-      builder: (column, joinBuilders) =>
-          ColumnOrderings(column, joinBuilders: joinBuilders));
+  ColumnOrderings<String> get textColumn => $state.composableBuilder(column: $state.table.textColumn, builder: (column, joinBuilders) => ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 class $CustomTablesDbManager {
   final _$CustomTablesDb _db;
   $CustomTablesDbManager(this._db);
   $NoIdsTableManager get noIds => $NoIdsTableManager(_db, _db.noIds);
-  $WithDefaultsTableManager get withDefaults =>
-      $WithDefaultsTableManager(_db, _db.withDefaults);
-  $WithConstraintsTableManager get withConstraints =>
-      $WithConstraintsTableManager(_db, _db.withConstraints);
-  $ConfigTableTableManager get config =>
-      $ConfigTableTableManager(_db, _db.config);
+  $WithDefaultsTableManager get withDefaults => $WithDefaultsTableManager(_db, _db.withDefaults);
+  $WithConstraintsTableManager get withConstraints => $WithConstraintsTableManager(_db, _db.withConstraints);
+  $ConfigTableTableManager get config => $ConfigTableTableManager(_db, _db.config);
   $MytableTableManager get mytable => $MytableTableManager(_db, _db.mytable);
   $EmailTableManager get email => $EmailTableManager(_db, _db.email);
-  $WeirdTableTableManager get weirdTable =>
-      $WeirdTableTableManager(_db, _db.weirdTable);
+  $WeirdTableTableManager get weirdTable => $WeirdTableTableManager(_db, _db.weirdTable);
 }
 
 typedef ReadMultiple$clause = OrderBy Function(ConfigTable config);
@@ -2763,11 +2134,7 @@ class JsonResult extends CustomResultSet {
   @override
   int get hashCode => Object.hash(key, value);
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is JsonResult &&
-          other.key == this.key &&
-          other.value == this.value);
+  bool operator ==(Object other) => identical(this, other) || (other is JsonResult && other.key == this.key && other.value == this.value);
   @override
   String toString() {
     return (StringBuffer('JsonResult(')
@@ -2791,12 +2158,7 @@ class MultipleResult extends CustomResultSet {
   @override
   int get hashCode => Object.hash(a, b, c);
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is MultipleResult &&
-          other.a == this.a &&
-          other.b == this.b &&
-          other.c == this.c);
+  bool operator ==(Object other) => identical(this, other) || (other is MultipleResult && other.a == this.a && other.b == this.b && other.c == this.c);
   @override
   String toString() {
     return (StringBuffer('MultipleResult(')
@@ -2808,8 +2170,7 @@ class MultipleResult extends CustomResultSet {
   }
 }
 
-typedef Multiple$predicate = Expression<bool> Function(
-    WithDefaults d, WithConstraints c);
+typedef Multiple$predicate = Expression<bool> Function(WithDefaults d, WithConstraints c);
 
 class ReadRowIdResult extends CustomResultSet {
   final int rowid;
@@ -2826,8 +2187,7 @@ class ReadRowIdResult extends CustomResultSet {
     this.syncStateImplicit,
   }) : super(row);
   @override
-  int get hashCode =>
-      Object.hash(rowid, configKey, configValue, syncState, syncStateImplicit);
+  int get hashCode => Object.hash(rowid, configKey, configValue, syncState, syncStateImplicit);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2864,11 +2224,7 @@ class NestedResult extends CustomResultSet {
   @override
   int get hashCode => Object.hash(defaults, nestedQuery1);
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is NestedResult &&
-          other.defaults == this.defaults &&
-          other.nestedQuery1 == this.nestedQuery1);
+  bool operator ==(Object other) => identical(this, other) || (other is NestedResult && other.defaults == this.defaults && other.nestedQuery1 == this.nestedQuery1);
   @override
   String toString() {
     return (StringBuffer('NestedResult(')

@@ -11,8 +11,7 @@ part of '../query_builder.dart';
 /// [D] is the type of the data class generated from the table.
 ///
 /// To obtain an instance of this class, use a table getter from the database.
-mixin TableInfo<TableDsl extends Table, D> on Table
-    implements DatabaseSchemaEntity, ResultSetImplementation<TableDsl, D> {
+mixin TableInfo<TableDsl extends Table, D> on Table implements DatabaseSchemaEntity, ResultSetImplementation<TableDsl, D> {
   @override
   TableDsl get asDslTable => this as TableDsl;
 
@@ -37,28 +36,25 @@ mixin TableInfo<TableDsl extends Table, D> on Table
   List<Set<GeneratedColumn>> get uniqueKeys => const [];
 
   @override
-  String get aliasedName => entityName;
+  String get aliasedName => entityColName;
 
   /// The name of the table in the database. Unlike [aliasedName], this can not
   /// be aliased.
   String get actualTableName;
 
   @override
-  String get entityName => actualTableName;
+  String get entityColName => actualTableName;
 
   Map<String, GeneratedColumn>? _columnsByName;
 
   @override
   Map<String, GeneratedColumn> get columnsByName {
-    return _columnsByName ??= {
-      for (final column in $columns) column.$name: column
-    };
+    return _columnsByName ??= {for (final column in $columns) column.$name: column};
   }
 
   /// Validates that the given entity can be inserted into this table, meaning
   /// that it respects all constraints (nullability, text length, etc.).
-  VerificationContext validateIntegrity(Insertable<D> instance,
-      {bool isInserting = false}) {
+  VerificationContext validateIntegrity(Insertable<D> instance, {bool isInserting = false}) {
     // default behavior when users chose to not verify the integrity (build time
     // option)
     return const VerificationContext.notEnabled();
@@ -70,8 +66,7 @@ mixin TableInfo<TableDsl extends Table, D> on Table
   /// The [database] instance is used so that the raw values from the companion
   /// can properly be interpreted as the high-level Dart values exposed by the
   /// data class.
-  Future<D> mapFromCompanion(
-      Insertable<D> companion, DatabaseConnectionUser database) async {
+  Future<D> mapFromCompanion(Insertable<D> companion, DatabaseConnectionUser database) async {
     final asColumnMap = companion.toColumns(false);
 
     if (asColumnMap.values.any((e) => e is! Variable)) {
@@ -81,9 +76,7 @@ mixin TableInfo<TableDsl extends Table, D> on Table
     }
 
     final context = GenerationContext.fromDb(database);
-    final rawValues = asColumnMap
-        .cast<String, Variable>()
-        .map((key, value) => MapEntry(key, value.mapToSimpleValue(context)));
+    final rawValues = asColumnMap.cast<String, Variable>().map((key, value) => MapEntry(key, value.mapToSimpleValue(context)));
 
     return map(rawValues);
   }
@@ -95,8 +88,7 @@ mixin TableInfo<TableDsl extends Table, D> on Table
   bool operator ==(Object other) {
     // tables are singleton instances except for aliases
     if (other is TableInfo) {
-      return other.runtimeType == runtimeType &&
-          other.aliasedName == aliasedName;
+      return other.runtimeType == runtimeType && other.aliasedName == aliasedName;
     }
     return false;
   }
@@ -128,9 +120,7 @@ extension TableInfoUtils<TableDsl, D> on ResultSetImplementation<TableDsl, D> {
   Future<D?> mapFromRowOrNull(QueryRow row, {String? tablePrefix}) {
     final resolvedPrefix = tablePrefix == null ? '' : '$tablePrefix.';
 
-    final notInRow = $columns
-        .where((c) => !c.$nullable)
-        .any((e) => row.data['$resolvedPrefix${e.$name}'] == null);
+    final notInRow = $columns.where((c) => !c.$nullable).any((e) => row.data['$resolvedPrefix${e.$name}'] == null);
 
     if (notInRow) return Future.value(null);
 
@@ -174,7 +164,6 @@ extension RowIdExtension on TableInfo {
       throw ArgumentError('Cannot use rowId on a table without a rowid!');
     }
 
-    return GeneratedColumn<int>('_rowid_', aliasedName, false,
-        type: DriftSqlType.int);
+    return GeneratedColumn<int>('_rowid_', aliasedName, false, type: DriftSqlType.int);
   }
 }
