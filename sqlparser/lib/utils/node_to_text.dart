@@ -33,8 +33,7 @@ class NodeSqlBuilder extends AstVisitor<void, void> {
   }
 
   @override
-  void visitAggregateFunctionInvocation(
-      AggregateFunctionInvocation e, void arg) {
+  void visitAggregateFunctionInvocation(AggregateFunctionInvocation e, void arg) {
     symbol(e.name, spaceBefore: true);
 
     symbol('(');
@@ -441,8 +440,7 @@ class NodeSqlBuilder extends AstVisitor<void, void> {
   }
 
   @override
-  void visitCreateVirtualTableStatement(
-      CreateVirtualTableStatement e, void arg) {
+  void visitCreateVirtualTableStatement(CreateVirtualTableStatement e, void arg) {
     keyword(TokenType.create);
     keyword(TokenType.virtual);
     keyword(TokenType.table);
@@ -808,8 +806,7 @@ class NodeSqlBuilder extends AstVisitor<void, void> {
 
   @override
   void visitInvalidStatement(InvalidStatement e, void arg) {
-    throw UnsupportedError(
-        'InvalidStatement does not have a textual representation');
+    throw UnsupportedError('InvalidStatement does not have a textual representation');
   }
 
   @override
@@ -988,15 +985,13 @@ class NodeSqlBuilder extends AstVisitor<void, void> {
       symbol('.');
       didWriteSpaceBefore = true;
     }
-    if (e.entityName != null) {
-      identifier(e.entityName!,
-          spaceAfter: false, spaceBefore: !didWriteSpaceBefore);
+    if (e.entityColName != null) {
+      identifier(e.entityColName!, spaceAfter: false, spaceBefore: !didWriteSpaceBefore);
       symbol('.');
       didWriteSpaceBefore = true;
     }
 
-    identifier(e.columnName,
-        spaceAfter: true, spaceBefore: !didWriteSpaceBefore);
+    identifier(e.columnName, spaceAfter: true, spaceBefore: !didWriteSpaceBefore);
   }
 
   @override
@@ -1056,8 +1051,7 @@ class NodeSqlBuilder extends AstVisitor<void, void> {
   }
 
   @override
-  void visitSemicolonSeparatedStatements(
-      SemicolonSeparatedStatements e, void arg) {
+  void visitSemicolonSeparatedStatements(SemicolonSeparatedStatements e, void arg) {
     for (final stmt in e.statements) {
       visit(stmt, arg);
       buffer.writeln(';');
@@ -1361,8 +1355,7 @@ class NodeSqlBuilder extends AstVisitor<void, void> {
   }
 
   /// Writes an identifier, escaping it if necessary.
-  void identifier(String identifier,
-      {bool spaceBefore = true, bool spaceAfter = true}) {
+  void identifier(String identifier, {bool spaceBefore = true, bool spaceAfter = true}) {
     if (isKeyword(identifier) || _notAKeywordRegex.hasMatch(identifier)) {
       identifier = escapeIdentifier(identifier);
     }
@@ -1370,8 +1363,7 @@ class NodeSqlBuilder extends AstVisitor<void, void> {
     symbol(identifier, spaceBefore: spaceBefore, spaceAfter: spaceAfter);
   }
 
-  void dartCode(String code,
-      {bool spaceBefore = true, bool spaceAfter = true}) {
+  void dartCode(String code, {bool spaceBefore = true, bool spaceAfter = true}) {
     symbol('`$code`', spaceBefore: spaceBefore, spaceAfter: spaceAfter);
   }
 
@@ -1417,8 +1409,7 @@ class NodeSqlBuilder extends AstVisitor<void, void> {
   }
 
   /// Writes the [lexeme], unchanged.
-  void symbol(String lexeme,
-      {bool spaceBefore = false, bool spaceAfter = false}) {
+  void symbol(String lexeme, {bool spaceBefore = false, bool spaceAfter = false}) {
     if (needsSpace && spaceBefore) {
       _space();
     }

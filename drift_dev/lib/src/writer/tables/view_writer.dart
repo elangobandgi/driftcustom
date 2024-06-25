@@ -19,8 +19,7 @@ class ViewWriter extends TableOrViewWriter {
   ViewWriter(this.view, this.scope, this.databaseWriter);
 
   void write() {
-    if (scope.generationOptions.writeDataClasses &&
-        !tableOrView.hasExistingRowClass) {
+    if (scope.generationOptions.writeDataClasses && !tableOrView.hasExistingRowClass) {
       DataClassWriter(view, scope).write();
     }
 
@@ -30,8 +29,7 @@ class ViewWriter extends TableOrViewWriter {
   void _writeViewInfoClass() {
     emitter = scope.leaf();
 
-    buffer.write(
-        'class ${view.entityInfoName} extends ${emitter.drift('ViewInfo')}');
+    buffer.write('class ${view.entityInfoName} extends ${emitter.drift('ViewInfo')}');
     if (scope.generationOptions.writeDataClasses) {
       final viewClassName = emitter.dartCode(emitter.entityInfoType(view));
       emitter
@@ -43,8 +41,7 @@ class ViewWriter extends TableOrViewWriter {
     }
     buffer.writeln(' implements ${emitter.drift('HasResultSet')} {');
 
-    final dbClassName =
-        databaseWriter?.dbClassName ?? emitter.drift('GeneratedDatabase');
+    final dbClassName = databaseWriter?.dbClassName ?? emitter.drift('GeneratedDatabase');
     buffer
       ..writeln('final String? _alias;')
       ..writeln('@override final $dbClassName attachedDatabase;')
@@ -71,8 +68,8 @@ class ViewWriter extends TableOrViewWriter {
 
     buffer
       ..write('@override\nString get aliasedName => '
-          '_alias ?? entityName;\n')
-      ..write('@override\n String get entityName=>'
+          '_alias ?? entityColName;\n')
+      ..write('@override\n String get entityColName=>'
           ' ${asDartLiteral(view.schemaName)};\n');
 
     emitter
@@ -110,9 +107,7 @@ class ViewWriter extends TableOrViewWriter {
     _writeAliasGenerator();
     _writeQuery();
 
-    final readTables = view.transitiveTableReferences
-        .map((e) => asDartLiteral(e.schemaName))
-        .join(', ');
+    final readTables = view.transitiveTableReferences.map((e) => asDartLiteral(e.schemaName)).join(', ');
     buffer.writeln('''
       @override
       Set<String> get readTables => const {$readTables};
@@ -138,8 +133,7 @@ class ViewWriter extends TableOrViewWriter {
     final source = view.source;
     if (source is DartViewSource) {
       emitter
-        ..write(
-            '(attachedDatabase.selectOnly(${scope.options.assumeCorrectReference ? source.primaryFrom?.name ?? source.staticSource : source.primaryFrom?.name})'
+        ..write('(attachedDatabase.selectOnly(${scope.options.assumeCorrectReference ? source.primaryFrom?.name ?? source.staticSource : source.primaryFrom?.name})'
             '..addColumns(\$columns))')
         ..writeDart(source.dartQuerySource)
         ..writeln(';');

@@ -201,13 +201,12 @@ final Map<String, Expression> _testCases = {
     ]),
   ),
   'RAISE(IGNORE)': RaiseExpression(RaiseKind.ignore),
-  "RAISE(ROLLBACK, 'Not allowed')":
-      RaiseExpression(RaiseKind.rollback, 'Not allowed'),
+  "RAISE(ROLLBACK, 'Not allowed')": RaiseExpression(RaiseKind.rollback, 'Not allowed'),
   'foo': Reference(columnName: 'foo'),
-  'foo.bar': Reference(entityName: 'foo', columnName: 'bar'),
+  'foo.bar': Reference(entityColName: 'foo', columnName: 'bar'),
   'foo.bar.baz': Reference(
     schemaName: 'foo',
-    entityName: 'bar',
+    entityColName: 'bar',
     columnName: 'baz',
   ),
   'foo IS DISTINCT FROM bar': IsExpression(

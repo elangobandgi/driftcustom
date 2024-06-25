@@ -18,18 +18,16 @@ class VerifierImplementation implements SchemaVerifier {
   VerifierImplementation(this.helper, {this.setup});
 
   @override
-  Future<void> migrateAndValidate(GeneratedDatabase db, int expectedVersion,
-      {bool validateDropped = false}) async {
+  Future<void> migrateAndValidate(GeneratedDatabase db, int expectedVersion, {bool validateDropped = false}) async {
     final virtualTables = <String>[
       for (final table in db.allTables)
-        if (table is VirtualTableInfo) table.entityName,
+        if (table is VirtualTableInfo) table.entityColName,
     ];
 
     // Open a connection to instantiate and extract the reference schema.
     final otherConnection = await startAt(expectedVersion);
     await otherConnection.executor.ensureOpen(_DelegatingUser(expectedVersion));
-    final referenceSchema =
-        await otherConnection.executor.collectSchemaInput(virtualTables);
+    final referenceSchema = await otherConnection.executor.collectSchemaInput(virtualTables);
     await otherConnection.executor.close();
 
     // Attach the reference schema to the database so that VerifySelf.validateDatabaseSchema
@@ -51,8 +49,7 @@ class VerifierImplementation implements SchemaVerifier {
 
     final buffer = StringBuffer();
     for (var i = 0; i < length; i++) {
-      buffer.writeCharCode(
-          _random.nextInt(charCodeLowerZ - charCodeLowerA) + charCodeLowerA);
+      buffer.writeCharCode(_random.nextInt(charCodeLowerZ - charCodeLowerA) + charCodeLowerA);
     }
 
     return buffer.toString();
@@ -102,8 +99,7 @@ class VerifierImplementation implements SchemaVerifier {
   }
 }
 
-Input? _parseInputFromSchemaRow(
-    Map<String, Object?> row, List<String> virtualTables) {
+Input? _parseInputFromSchemaRow(Map<String, Object?> row, List<String> virtualTables) {
   final name = row['name'] as String;
   if (isInternalElement(name, virtualTables)) {
     return null;

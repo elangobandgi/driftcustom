@@ -1,8 +1,7 @@
 part of '../analysis.dart';
 
 /// Resolves any open [Reference] it finds in the AST.
-class ReferenceResolver
-    extends RecursiveVisitor<ReferenceResolvingContext, void> {
+class ReferenceResolver extends RecursiveVisitor<ReferenceResolvingContext, void> {
   final AnalysisContext context;
 
   ReferenceResolver(this.context);
@@ -22,14 +21,12 @@ class ReferenceResolver
 
   @override
   void visitGroupBy(GroupBy e, ReferenceResolvingContext arg) {
-    return super.visitGroupBy(
-        e, const ReferenceResolvingContext(canReferToColumnAlias: true));
+    return super.visitGroupBy(e, const ReferenceResolvingContext(canReferToColumnAlias: true));
   }
 
   @override
   void visitOrderBy(OrderBy e, ReferenceResolvingContext arg) {
-    return super.visitOrderBy(
-        e, ReferenceResolvingContext(canReferToColumnAlias: true));
+    return super.visitOrderBy(e, ReferenceResolvingContext(canReferToColumnAlias: true));
   }
 
   @override
@@ -40,16 +37,16 @@ class ReferenceResolver
 
     final scope = e.scope;
 
-    if (e.entityName != null) {
+    if (e.entityColName != null) {
       // first find the referenced table or view,
       // then use the column on that table or view.
-      final entityResolver = scope.resolveResultSetForReference(e.entityName!);
+      final entityResolver = scope.resolveResultSetForReference(e.entityColName!);
       final resultSet = entityResolver?.resultSet.resultSet;
 
       if (resultSet == null) {
         context.reportError(AnalysisError(
           type: AnalysisErrorType.referencedUnknownTable,
-          message: 'Unknown table or view: ${e.entityName}',
+          message: 'Unknown table or view: ${e.entityColName}',
           relevantNode: e,
         ));
       } else {
@@ -76,8 +73,7 @@ class ReferenceResolver
         _reportUnknownColumnError(e);
       } else {
         if (found.length > 1) {
-          final description =
-              found.map((c) => c.humanReadableDescription()).join(', ');
+          final description = found.map((c) => c.humanReadableDescription()).join(', ');
 
           context.reportError(AnalysisError(
             type: AnalysisErrorType.ambiguousReference,
@@ -109,11 +105,9 @@ class ReferenceResolver
   }
 
   @override
-  void visitWindowFunctionInvocation(
-      WindowFunctionInvocation e, ReferenceResolvingContext arg) {
+  void visitWindowFunctionInvocation(WindowFunctionInvocation e, ReferenceResolvingContext arg) {
     if (e.windowName != null && e.resolved == null) {
-      e.resolved =
-          StatementScope.cast(e.scope).windowDeclarations[e.windowName!];
+      e.resolved = StatementScope.cast(e.scope).windowDeclarations[e.windowName!];
     }
 
     visitChildren(e, arg);
@@ -122,8 +116,7 @@ class ReferenceResolver
   void _reportUnknownColumnError(Reference e, {Iterable<Column>? columns}) {
     final msg = StringBuffer('Unknown column.');
     if (columns != null) {
-      final columnNames =
-          columns.map((c) => c.humanReadableDescription()).join(', ');
+      final columnNames = columns.map((c) => c.humanReadableDescription()).join(', ');
       msg.write(' These columns are available: $columnNames');
     }
 
@@ -134,8 +127,7 @@ class ReferenceResolver
     ));
   }
 
-  void _resolveReferenceInTable(Reference ref, ResultSet resultSet,
-      {ResultSetAvailableInStatement? source}) {
+  void _resolveReferenceInTable(Reference ref, ResultSet resultSet, {ResultSetAvailableInStatement? source}) {
     var column = resultSet.findColumn(ref.columnName);
     if (column == null) {
       _reportUnknownColumnError(ref, columns: resultSet.resolvedColumns);

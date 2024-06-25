@@ -7,8 +7,7 @@ import 'package:meta/meta.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 export 'package:drift/internal/migrations.dart';
-export 'package:drift_dev/src/services/schema/verifier_common.dart'
-    show SchemaMismatch;
+export 'package:drift_dev/src/services/schema/verifier_common.dart' show SchemaMismatch;
 
 abstract class SchemaVerifier {
   /// Creates a schema verifier for the drift-generated [helper].
@@ -71,8 +70,7 @@ abstract class SchemaVerifier {
   /// If [validateDropped] is enabled (defaults to `false`), the method also
   /// validates that no further tables, triggers or views apart from those
   /// expected exist.
-  Future<void> migrateAndValidate(GeneratedDatabase db, int expectedVersion,
-      {bool validateDropped = false});
+  Future<void> migrateAndValidate(GeneratedDatabase db, int expectedVersion, {bool validateDropped = false});
 }
 
 /// Utilities verifying that the current schema of the database matches what
@@ -97,10 +95,7 @@ extension VerifySelf on GeneratedDatabase {
   /// verifies that all schema elements that you've deleted at some point are no
   /// longer present in your runtime schema.
   Future<void> validateDatabaseSchema({bool validateDropped = true}) async {
-    final virtualTables = allTables
-        .whereType<VirtualTableInfo>()
-        .map((e) => e.entityName)
-        .toList();
+    final virtualTables = allTables.whereType<VirtualTableInfo>().map((e) => e.entityColName).toList();
 
     final schemaOfThisDatabase = await collectSchemaInput(virtualTables);
 
@@ -114,8 +109,7 @@ extension VerifySelf on GeneratedDatabase {
       // Collect the schema how it would be if we just called `createAll` on a
       // clean database.
       final referenceDb = _GenerateFromScratch(this, NativeDatabase.memory());
-      referenceSchema = expectedSchema[this] ??
-          await referenceDb.collectSchemaInput(virtualTables);
+      referenceSchema = expectedSchema[this] ?? await referenceDb.collectSchemaInput(virtualTables);
       await referenceDb.close();
     }
 
@@ -126,8 +120,7 @@ extension VerifySelf on GeneratedDatabase {
 class _GenerateFromScratch extends GeneratedDatabase {
   final GeneratedDatabase reference;
 
-  _GenerateFromScratch(this.reference, QueryExecutor executor)
-      : super(executor);
+  _GenerateFromScratch(this.reference, QueryExecutor executor) : super(executor);
 
   @override
   DriftDatabaseOptions get options => reference.options;
@@ -136,8 +129,7 @@ class _GenerateFromScratch extends GeneratedDatabase {
   Iterable<TableInfo<Table, dynamic>> get allTables => reference.allTables;
 
   @override
-  Iterable<DatabaseSchemaEntity> get allSchemaEntities =>
-      reference.allSchemaEntities;
+  Iterable<DatabaseSchemaEntity> get allSchemaEntities => reference.allSchemaEntities;
 
   @override
   int get schemaVersion => 1;

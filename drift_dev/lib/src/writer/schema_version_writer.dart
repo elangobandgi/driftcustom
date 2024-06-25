@@ -187,7 +187,7 @@ class SchemaVersionWriter {
 
           writer
             ..writeUriRef(_schemaLibrary, 'VersionedVirtualTable(')
-            ..write('entityName: ${asDartLiteral(entity.schemaName)},')
+            ..write('entityColName: ${asDartLiteral(entity.schemaName)},')
             ..write('moduleAndArgs: ${asDartLiteral(info.moduleAndArgs)},');
         } else {
           final tableConstraints = <String>[];
@@ -243,7 +243,7 @@ class SchemaVersionWriter {
 
           writer
             ..writeUriRef(_schemaLibrary, 'VersionedTable(')
-            ..write('entityName: ${asDartLiteral(entity.schemaName)},')
+            ..write('entityColName: ${asDartLiteral(entity.schemaName)},')
             ..write('withoutRowId: ${entity.withoutRowId},')
             ..write('isStrict: ${entity.strict},')
             ..write('tableConstraints: [');
@@ -262,7 +262,7 @@ class SchemaVersionWriter {
 
         writer
           ..writeUriRef(_schemaLibrary, 'VersionedView(')
-          ..write('entityName: ${asDartLiteral(entity.schemaName)},')
+          ..write('entityColName: ${asDartLiteral(entity.schemaName)},')
           ..write(
               'createViewStmt: ${asDartLiteral(source.sqlCreateViewStmt)},');
 

@@ -101,8 +101,7 @@ class NestedQueryAnalyzer extends RecursiveVisitor<_AnalyzerState, void> {
     if (resultEntity != null && container is NestedQuery) {
       if (!resultEntity.origin.isChildOf(arg.container.select)) {
         // Reference captures a variable outside of this query
-        final capture = container.capturedVariables[e] =
-            CapturedVariable(e, _capturingVariableCounter++);
+        final capture = container.capturedVariables[e] = CapturedVariable(e, _capturingVariableCounter++);
 
         // Keep track of the position of the variable so that we can later
         // assign it the right index.
@@ -129,7 +128,7 @@ class _AnalyzerState {
       container.addedColumns.add(
         ExpressionResultColumn(
           expression: Reference(
-            entityName: variable.reference.entityName,
+            entityColName: variable.reference.entityColName,
             columnName: variable.reference.columnName,
           ),
           as: variable.helperColumn,
@@ -160,8 +159,7 @@ class _AnalyzerState {
 /// - add result columns for outgoing references in nested queries
 /// - replace outgoing references with variables
 SelectStatement addHelperNodes(NestedQueriesContainer rootContainer) {
-  return _NestedQueryTransformer()
-      .transform(rootContainer.select, rootContainer) as SelectStatement;
+  return _NestedQueryTransformer().transform(rootContainer.select, rootContainer) as SelectStatement;
 }
 
 class _NestedQueryTransformer extends Transformer<NestedQueriesContainer> {
@@ -176,8 +174,7 @@ class _NestedQueryTransformer extends Transformer<NestedQueriesContainer> {
   }
 
   @override
-  AstNode? visitDriftSpecificNode(
-      DriftSpecificNode e, NestedQueriesContainer arg) {
+  AstNode? visitDriftSpecificNode(DriftSpecificNode e, NestedQueriesContainer arg) {
     if (e is NestedQueryColumn) {
       final child = arg.nestedQueries[e];
       if (child != null) {

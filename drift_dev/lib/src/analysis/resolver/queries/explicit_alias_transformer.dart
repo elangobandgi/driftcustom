@@ -89,7 +89,7 @@ class _PatchReferences extends Transformer<void> {
     if (resolved != null) {
       final name = _transformer.newNameFor(resolved);
       if (name != null) {
-        return Reference(columnName: name, entityName: e.entityName);
+        return Reference(columnName: name, entityColName: e.entityColName);
       }
     }
 

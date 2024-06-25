@@ -47,9 +47,9 @@ void main() {
               ],
               from: TableReference('bar', as: 'b'),
               where: BinaryExpression(
-                Reference(entityName: 'b', columnName: 'id'),
+                Reference(entityColName: 'b', columnName: 'id'),
                 token(TokenType.equal),
-                Reference(entityName: 'foo', columnName: 'id'),
+                Reference(entityColName: 'foo', columnName: 'id'),
               ),
             ),
           ),
@@ -69,8 +69,7 @@ void main() {
           columns: [Reference(columnName: 'a'), Reference(columnName: 'b')],
           rowValue: Tuple(expressions: [
             Reference(columnName: "b"),
-            BinaryExpression(
-                NumericLiteral(3), token(TokenType.plus), NumericLiteral(4)),
+            BinaryExpression(NumericLiteral(3), token(TokenType.plus), NumericLiteral(4)),
           ], usedAsRowValue: true),
         )
       ]),
@@ -94,7 +93,7 @@ void main() {
             expression: BinaryExpression(
               Reference(columnName: 'quantity'),
               token(TokenType.minus),
-              Reference(entityName: 'daily', columnName: 'amt'),
+              Reference(entityColName: 'daily', columnName: 'amt'),
             ),
           ),
         ],
@@ -122,9 +121,9 @@ void main() {
           as: 'daily',
         ),
         where: BinaryExpression(
-          Reference(entityName: 'inventory', columnName: 'itemId'),
+          Reference(entityColName: 'inventory', columnName: 'itemId'),
           token(TokenType.equal),
-          Reference(entityName: 'daily', columnName: 'itemId'),
+          Reference(entityColName: 'daily', columnName: 'itemId'),
         ),
       ),
     );

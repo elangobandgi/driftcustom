@@ -38,8 +38,7 @@ class Parser {
 
   int _current = 0;
 
-  Parser(this.tokens, {bool useDrift = false, this.autoComplete})
-      : enableDriftExtensions = useDrift;
+  Parser(this.tokens, {bool useDrift = false, this.autoComplete}) : enableDriftExtensions = useDrift;
 
   bool get _reportAutoComplete => autoComplete != null;
 
@@ -186,8 +185,7 @@ class Parser {
 
   /// Parses a statement without throwing when there's a parsing error.
   Statement safeStatement() {
-    return _parseAsStatement(statement, requireSemicolon: false) ??
-        InvalidStatement();
+    return _parseAsStatement(statement, requireSemicolon: false) ?? InvalidStatement();
   }
 
   SemicolonSeparatedStatements safeStatements() {
@@ -200,8 +198,7 @@ class Parser {
       if (statement != null) {
         statements.add(statement);
       } else {
-        statements
-            .add(InvalidStatement()..setSpan(firstForStatement, _previous));
+        statements.add(InvalidStatement()..setSpan(firstForStatement, _previous));
       }
     }
 
@@ -308,9 +305,7 @@ class Parser {
   ImportStatement? _import() {
     if (_matchOne(TokenType.import)) {
       final importToken = _previous;
-      final import = _consume(TokenType.stringLiteral,
-              'Expected import file as a string literal (single quoted)')
-          as StringLiteralToken;
+      final import = _consume(TokenType.stringLiteral, 'Expected import file as a string literal (single quoted)') as StringLiteralToken;
 
       return ImportStatement(import.value)
         ..importToken = importToken
@@ -323,15 +318,13 @@ class Parser {
     DeclaredStatementIdentifier identifier;
 
     if (_check(TokenType.identifier) || _peek is KeywordToken) {
-      final name = _consumeIdentifier('Expected a name for a declared query',
-          lenient: true);
+      final name = _consumeIdentifier('Expected a name for a declared query', lenient: true);
 
       identifier = SimpleName(name.identifier)..identifier = name;
     } else if (_matchOne(TokenType.atSignVariable)) {
       final previous = _previous as AtSignVariableToken;
 
-      identifier = SpecialStatementIdentifier(previous.name)
-        ..nameToken = previous;
+      identifier = SpecialStatementIdentifier(previous.name)..nameToken = previous;
     } else {
       return null;
     }
@@ -360,8 +353,7 @@ class Parser {
     }
 
     if (stmt == null) {
-      _error(
-          'Expected a sql statement here (SELECT, UPDATE, INSERT or DELETE)');
+      _error('Expected a sql statement here (SELECT, UPDATE, INSERT or DELETE)');
     }
 
     return DeclaredStatement(
@@ -383,8 +375,7 @@ class Parser {
       String? typeName;
       if (_matchOne(TokenType.as)) {
         as = _previous;
-        final typeNameTokens =
-            _typeName() ?? _error('Expected a type name here');
+        final typeNameTokens = _typeName() ?? _error('Expected a type name here');
         typeName = typeNameTokens.lexeme;
       }
 
@@ -394,8 +385,7 @@ class Parser {
         orNull = true;
       }
 
-      return VariableTypeHint(variable, typeName,
-          orNull: orNull, isRequired: isRequired)
+      return VariableTypeHint(variable, typeName, orNull: orNull, isRequired: isRequired)
         ..as = as
         ..setSpan(first, _previous);
     } else if (_matchOne(TokenType.dollarSignVariable)) {
@@ -413,16 +403,14 @@ class Parser {
 
   /// Invokes [parser], sets the appropriate source span and attaches a
   /// semicolon if one exists.
-  T? _parseAsStatement<T extends Statement>(T? Function() parser,
-      {bool requireSemicolon = true}) {
+  T? _parseAsStatement<T extends Statement>(T? Function() parser, {bool requireSemicolon = true}) {
     final first = _peek;
     T? result;
     try {
       result = parser();
 
       if (result != null && requireSemicolon) {
-        result.semicolon = _consume(TokenType.semicolon,
-            'Expected a semicolon after the statement ended');
+        result.semicolon = _consume(TokenType.semicolon, 'Expected a semicolon after the statement ended');
         result.setSpan(first, _previous);
       }
     } on ParsingError {
@@ -473,12 +461,10 @@ class Parser {
   TransactionBlock _transactionBlock() {
     final first = _peek;
     final begin = _beginStatement();
-    final stmts = _crudStatements(
-        () => _checkAny(const [TokenType.commit, TokenType.end]));
+    final stmts = _crudStatements(() => _checkAny(const [TokenType.commit, TokenType.end]));
     final end = _commit();
 
-    return TransactionBlock(begin: begin, innerStatements: stmts, commit: end)
-      ..setSpan(first, _previous);
+    return TransactionBlock(begin: begin, innerStatements: stmts, commit: end)..setSpan(first, _previous);
   }
 
   Expression expression() {
@@ -488,15 +474,13 @@ class Parser {
   /// Parses an expression of the form a <T> b, where <T> is in [types] and
   /// both a and b are expressions with a higher precedence parsed from
   /// [higherPrecedence].
-  Expression _parseSimpleBinary(
-      List<TokenType> types, Expression Function() higherPrecedence) {
+  Expression _parseSimpleBinary(List<TokenType> types, Expression Function() higherPrecedence) {
     var expression = higherPrecedence();
 
     while (_match(types)) {
       final operator = _previous;
       final right = higherPrecedence();
-      expression = BinaryExpression(expression, operator, right)
-        ..setSpan(expression.first!, _previous);
+      expression = BinaryExpression(expression, operator, right)..setSpan(expression.first!, _previous);
     }
     return expression;
   }
@@ -525,8 +509,7 @@ class Parser {
         inside = target as InExpressionTarget;
       }
 
-      return InExpression(left: left, inside: inside, not: not)
-        ..setSpan(left.first!, _previous);
+      return InExpression(left: left, inside: inside, not: not)..setSpan(left.first!, _previous);
     }
 
     return left;
@@ -562,9 +545,7 @@ class Parser {
         _consume(TokenType.and, 'expected AND');
         final upper = _comparison();
 
-        expression = BetweenExpression(
-            not: not, check: expression, lower: lower, upper: upper)
-          ..setSpan(first!, _previous);
+        expression = BetweenExpression(not: not, check: expression, lower: lower, upper: upper)..setSpan(first!, _previous);
       } else if (_match(ops)) {
         final operator = _previous;
         if (operator.type == TokenType.$is) {
@@ -580,15 +561,13 @@ class Parser {
             distinctFrom = true;
           }
 
-          expression = IsExpression(not, expression, _comparison(),
-              distinctFromSyntax: distinctFrom)
+          expression = IsExpression(not, expression, _comparison(), distinctFromSyntax: distinctFrom)
             ..setSpan(first!, _previous)
             ..$is = isToken
             ..distinct = distinct
             ..from = from;
         } else {
-          expression = BinaryExpression(expression, operator, _comparison())
-            ..setSpan(first!, _previous);
+          expression = BinaryExpression(expression, operator, _comparison())..setSpan(first!, _previous);
         }
       } else if (_checkAnyWithNot(stringOps)) {
         final not = _matchOne(TokenType.not);
@@ -601,13 +580,7 @@ class Parser {
           escape = _comparison();
         }
 
-        expression = StringComparisonExpression(
-            not: not,
-            left: expression,
-            operator: operator,
-            right: right,
-            escape: escape)
-          ..setSpan(first!, _previous);
+        expression = StringComparisonExpression(not: not, left: expression, operator: operator, right: right, escape: escape)..setSpan(first!, _previous);
       } else {
         break; // no matching operator with this precedence was found
       }
@@ -640,11 +613,7 @@ class Parser {
   }
 
   Expression _concatenation() {
-    return _parseSimpleBinary(const [
-      TokenType.doublePipe,
-      TokenType.dashRangle,
-      TokenType.dashRangleRangle
-    ], _unary);
+    return _parseSimpleBinary(const [TokenType.doublePipe, TokenType.dashRangle, TokenType.dashRangleRangle], _unary);
   }
 
   Expression _unary() {
@@ -656,17 +625,13 @@ class Parser {
     ])) {
       final operator = _previous;
       final expression = _unary();
-      return UnaryExpression(operator, expression)
-        ..setSpan(operator, expression.last!);
+      return UnaryExpression(operator, expression)..setSpan(operator, expression.last!);
     } else if (_matchOne(TokenType.exists)) {
       final existsToken = _previous;
-      _consume(
-          TokenType.leftParen, 'Expected opening parenthesis after EXISTS');
+      _consume(TokenType.leftParen, 'Expected opening parenthesis after EXISTS');
       final selectStmt = _fullSelect() ?? _error('Expected a select statement');
-      _consume(TokenType.rightParen,
-          'Expected closing paranthesis to finish EXISTS expression');
-      return ExistsExpression(select: selectStmt)
-        ..setSpan(existsToken, _previous);
+      _consume(TokenType.rightParen, 'Expected closing paranthesis to finish EXISTS expression');
+      return ExistsExpression(select: selectStmt)..setSpan(existsToken, _previous);
     }
 
     return _postfix();
@@ -678,20 +643,14 @@ class Parser {
 
     // todo we don't currently parse "NOT NULL" (2 tokens) because of ambiguity
     // with NOT BETWEEN / NOT IN / ... expressions
-    const matchedTokens = [
-      TokenType.collate,
-      TokenType.notNull,
-      TokenType.isNull
-    ];
+    const matchedTokens = [TokenType.collate, TokenType.notNull, TokenType.isNull];
 
     while (_match(matchedTokens)) {
       final operator = _previous;
       switch (operator.type) {
         case TokenType.collate:
           final collateOp = _previous;
-          final collateFun =
-              _consume(TokenType.identifier, 'Expected a collating sequence')
-                  as IdentifierToken;
+          final collateFun = _consume(TokenType.identifier, 'Expected a collating sequence') as IdentifierToken;
           expression = CollateExpression(
             inner: expression,
             operator: collateOp,
@@ -728,8 +687,7 @@ class Parser {
         final whenExpr = _or();
         _consume(TokenType.then, 'Expected THEN');
         final then = expression();
-        whens.add(WhenComponent(when: whenExpr, then: then)
-          ..setSpan(whenToken, _previous));
+        whens.add(WhenComponent(when: whenExpr, then: then)..setSpan(whenToken, _previous));
       }
 
       if (_matchOne(TokenType.$else)) {
@@ -737,8 +695,7 @@ class Parser {
       }
 
       _consume(TokenType.end, 'Expected END to finish the case operator');
-      return CaseExpression(whens: whens, base: base, elseExpr: $else)
-        ..setSpan(caseToken, _previous);
+      return CaseExpression(whens: whens, base: base, elseExpr: $else)..setSpan(caseToken, _previous);
     } else if (_matchOne(TokenType.raise)) {
       final raiseToken = _previous;
       _consume(TokenType.leftParen, 'Expected a left parenthesis after RAISE');
@@ -760,14 +717,11 @@ class Parser {
       if (kind != RaiseKind.ignore) {
         _consume(TokenType.comma, 'Expected a comma here');
 
-        final messageToken =
-            _consume(TokenType.stringLiteral, 'Expected an error message here')
-                as StringLiteralToken;
+        final messageToken = _consume(TokenType.stringLiteral, 'Expected an error message here') as StringLiteralToken;
         message = messageToken.value;
       }
 
-      final end = _consume(
-          TokenType.rightParen, 'Expected a right parenthesis to finish RAISE');
+      final end = _consume(TokenType.rightParen, 'Expected a right parenthesis to finish RAISE');
       return RaiseExpression(kind, message)..setSpan(raiseToken, end);
     }
 
@@ -783,8 +737,7 @@ class Parser {
       }
       if (_matchOne(TokenType.stringLiteral)) {
         token as StringLiteralToken;
-        return StringLiteral(token.value, isBinary: token.binary)
-          ..token = token;
+        return StringLiteral(token.value, isBinary: token.binary)..token = token;
       }
       if (_matchOne(TokenType.$null)) {
         return NullLiteral()..token = token;
@@ -816,8 +769,7 @@ class Parser {
   }
 
   NumericLiteral _numericLiteral() {
-    final number = _consume(TokenType.numberLiteral, 'Expected a number here')
-        as NumericToken;
+    final number = _consume(TokenType.numberLiteral, 'Expected a number here') as NumericToken;
     return NumericLiteral(number.parsedNumber)
       ..token = number
       ..setSpan(number, number);
@@ -849,8 +801,7 @@ class Parser {
           } while (_matchOne(TokenType.comma));
 
           _consume(TokenType.rightParen, 'Expected a closing bracket');
-          return Tuple(expressions: expressions, usedAsRowValue: true)
-            ..setSpan(left, _previous);
+          return Tuple(expressions: expressions, usedAsRowValue: true)..setSpan(left, _previous);
         }
 
         _consume(TokenType.rightParen, 'Expected a closing bracket');
@@ -883,8 +834,7 @@ class Parser {
 
     if (_peek is KeywordToken) {
       // Improve error messages for possible function calls, https://github.com/simolus3/drift/discussions/2277
-      if (tokens.length > _current + 1 &&
-          _peekNext?.type == TokenType.leftParen) {
+      if (tokens.length > _current + 1 && _peekNext?.type == TokenType.leftParen) {
         _error(
           'Expected an expression here, but got a reserved keyword. Did you '
           'mean to call a function? Try wrapping the keyword in double quotes.',
@@ -902,8 +852,7 @@ class Parser {
   }
 
   Expression _referenceOrFunctionCall() {
-    final first = _consumeIdentifier(
-        'This error message should never be displayed. Please report.');
+    final first = _consumeIdentifier('This error message should never be displayed. Please report.');
 
     // An expression starting with an identifier could be three things:
     //  - a simple reference: "foo"
@@ -913,22 +862,20 @@ class Parser {
 
     if (_matchOne(TokenType.dot)) {
       // Ok, we're down to two here. it's either a table or a schema ref
-      final second = _consumeIdentifier('Expected a column or table name here',
-          lenient: true);
+      final second = _consumeIdentifier('Expected a column or table name here', lenient: true);
 
       if (_matchOne(TokenType.dot)) {
         // Three identifiers, that's a schema reference
-        final third =
-            _consumeIdentifier('Expected a column name here', lenient: true);
+        final third = _consumeIdentifier('Expected a column name here', lenient: true);
         return Reference(
           schemaName: first.identifier,
-          entityName: second.identifier,
+          entityColName: second.identifier,
           columnName: third.identifier,
         )..setSpan(first, third);
       } else {
         // Two identifiers only, so we have a table-based reference
         return Reference(
-          entityName: first.identifier,
+          entityColName: first.identifier,
           columnName: second.identifier,
         )..setSpan(first, second);
       }
@@ -939,12 +886,9 @@ class Parser {
       // Aggregate functions can use `ORDER BY` in their argument list.
       final orderBy = _orderBy();
 
-      final rightParen = _consume(
-          TokenType.rightParen, 'Expected closing bracket after argument list');
+      final rightParen = _consume(TokenType.rightParen, 'Expected closing bracket after argument list');
 
-      if (orderBy != null ||
-          _peek.type == TokenType.filter ||
-          _peek.type == TokenType.over) {
+      if (orderBy != null || _peek.type == TokenType.filter || _peek.type == TokenType.over) {
         return _aggregate(first, parameters, orderBy);
       }
 
@@ -964,8 +908,7 @@ class Parser {
         ..token = token
         ..setSpan(token, token);
     } else if (_matchOne(TokenType.colonVariable)) {
-      return ColonNamedVariable(_previous as ColonVariableToken)
-        ..setSpan(_previous, _previous);
+      return ColonNamedVariable(_previous as ColonVariableToken)..setSpan(_previous, _previous);
     }
     return null;
   }
@@ -992,8 +935,7 @@ class Parser {
       parameters.add(expression());
     } while (_matchOne(TokenType.comma));
 
-    return ExprFunctionParameters(
-        distinct: distinct != null, parameters: parameters)
+    return ExprFunctionParameters(distinct: distinct != null, parameters: parameters)
       ..distinctKeyword = distinct
       ..setSpan(first, _previous);
   }
@@ -1007,8 +949,7 @@ class Parser {
 
     // https://www.sqlite.org/syntax/filter.html (it's optional)
     if (_matchOne(TokenType.filter)) {
-      _consume(TokenType.leftParen,
-          'Expected opening parenthesis after filter statement');
+      _consume(TokenType.leftParen, 'Expected opening parenthesis after filter statement');
       _consume(TokenType.where, 'Expected WHERE clause');
       filter = expression();
       _consume(TokenType.rightParen, 'Expecteded closing parenthes');
@@ -1045,10 +986,8 @@ class Parser {
   /// Parses a [Tuple]. If [orSubQuery] is set (defaults to false), a [SubQuery]
   /// (in brackets) will be accepted as well. If parsing a [Tuple], [usedAsRowValue] is
   /// passed into the [Tuple] constructor.
-  Expression _consumeTuple(
-      {bool orSubQuery = false, bool usedAsRowValue = false}) {
-    final firstToken =
-        _consume(TokenType.leftParen, 'Expected opening parenthesis for tuple');
+  Expression _consumeTuple({bool orSubQuery = false, bool usedAsRowValue = false}) {
+    final firstToken = _consume(TokenType.leftParen, 'Expected opening parenthesis for tuple');
     final expressions = <Expression>[];
 
     // if desired, attempt to parse select statement
@@ -1062,13 +1001,10 @@ class Parser {
         } while (_matchOne(TokenType.comma));
       }
 
-      _consume(
-          TokenType.rightParen, 'Expected right parenthesis to close tuple');
-      return Tuple(expressions: expressions, usedAsRowValue: usedAsRowValue)
-        ..setSpan(firstToken, _previous);
+      _consume(TokenType.rightParen, 'Expected right parenthesis to close tuple');
+      return Tuple(expressions: expressions, usedAsRowValue: usedAsRowValue)..setSpan(firstToken, _previous);
     } else {
-      _consume(TokenType.rightParen,
-          'Expected right parenthesis to finish subquery');
+      _consume(TokenType.rightParen, 'Expected right parenthesis to finish subquery');
       return SubQuery(select: subQuery)..setSpan(firstToken, _previous);
     }
   }
@@ -1078,8 +1014,7 @@ class Parser {
     Token? modeToken;
     var mode = TransactionMode.none;
 
-    if (_match(
-        const [TokenType.deferred, TokenType.immediate, TokenType.exclusive])) {
+    if (_match(const [TokenType.deferred, TokenType.immediate, TokenType.exclusive])) {
       modeToken = _previous;
 
       switch (modeToken.type) {
@@ -1171,8 +1106,7 @@ class Parser {
           columnNames.add(identifier.identifier);
         } while (_matchOne(TokenType.comma));
 
-        _consume(TokenType.rightParen,
-            'Expected closing bracket after column names');
+        _consume(TokenType.rightParen, 'Expected closing bracket after column names');
       }
 
       final asToken = _consume(TokenType.as, 'Expected AS');
@@ -1323,13 +1257,11 @@ class Parser {
       tuples.add(_consumeTuple() as Tuple);
     } while (_matchOne(TokenType.comma));
 
-    return ValuesSelectStatement(tuples, withClause: withClause)
-      ..setSpan(firstToken, _previous);
+    return ValuesSelectStatement(tuples, withClause: withClause)..setSpan(firstToken, _previous);
   }
 
   CompoundSelectPart? _compoundSelectPart() {
-    if (_match(
-        const [TokenType.union, TokenType.intersect, TokenType.except])) {
+    if (_match(const [TokenType.union, TokenType.intersect, TokenType.except])) {
       final firstModeToken = _previous;
       var mode = const {
         TokenType.union: CompoundSelectMode.union,
@@ -1363,8 +1295,7 @@ class Parser {
   /// Returns null if there is
   IdentifierToken? _as() {
     if (_match(const [TokenType.as])) {
-      return _consume(TokenType.identifier, 'Expected an identifier')
-          as IdentifierToken;
+      return _consume(TokenType.identifier, 'Expected an identifier') as IdentifierToken;
     } else if (_match(const [TokenType.identifier])) {
       return _previous as IdentifierToken;
     } else {
@@ -1396,22 +1327,17 @@ class Parser {
         _consume(TokenType.rightParen, 'Expected closing parenthesis');
         final alias = allowAlias ? _as() : null;
 
-        return TableValuedFunction(tableRef.tableName, params,
-            as: alias?.identifier)
-          ..setSpan(tableRef.first!, _previous);
+        return TableValuedFunction(tableRef.tableName, params, as: alias?.identifier)..setSpan(tableRef.first!, _previous);
       }
 
       return tableRef;
     } else if (_matchOne(TokenType.leftParen)) {
       final first = _previous;
       final innerStmt = _fullSelect()!;
-      _consume(TokenType.rightParen,
-          'Expected a right bracket to terminate the inner select');
+      _consume(TokenType.rightParen, 'Expected a right bracket to terminate the inner select');
 
       final alias = allowAlias ? _as() : null;
-      return SelectStatementAsSource(
-          statement: innerStmt, as: alias?.identifier)
-        ..setSpan(first, _previous);
+      return SelectStatementAsSource(statement: innerStmt, as: alias?.identifier)..setSpan(first, _previous);
     }
 
     _error('Expected a table name or a nested select statement');
@@ -1449,17 +1375,13 @@ class Parser {
       operator = _optionalJoinOperator();
     }
 
-    return JoinClause(primary: start, joins: joins)
-      ..setSpan(start.first!, _previous);
+    return JoinClause(primary: start, joins: joins)..setSpan(start.first!, _previous);
   }
 
   /// Parses https://www.sqlite.org/syntax/join-operator.html
   JoinOperator? _optionalJoinOperator() {
     if (_matchOne(TokenType.comma) || _matchOne(TokenType.join)) {
-      return JoinOperator(_previous.type == TokenType.comma
-          ? JoinOperatorKind.comma
-          : JoinOperatorKind.none)
-        ..setSpan(_previous, _previous);
+      return JoinOperator(_previous.type == TokenType.comma ? JoinOperatorKind.comma : JoinOperatorKind.none)..setSpan(_previous, _previous);
     }
 
     const canAppearAfterNatural = {
@@ -1492,8 +1414,7 @@ class Parser {
     }
 
     _consume(TokenType.join);
-    return JoinOperator(kind, natural: natural, outer: outer)
-      ..setSpan(first, _previous);
+    return JoinOperator(kind, natural: natural, outer: outer)..setSpan(first, _previous);
   }
 
   /// Parses https://www.sqlite.org/syntax/join-constraint.html
@@ -1505,8 +1426,7 @@ class Parser {
 
       final columnNames = <String>[];
       do {
-        final identifier =
-            _consume(TokenType.identifier, 'Expected a column name');
+        final identifier = _consume(TokenType.identifier, 'Expected a column name');
         columnNames.add((identifier as IdentifierToken).identifier);
       } while (_matchOne(TokenType.comma));
 
@@ -1552,8 +1472,7 @@ class Parser {
     if (_matchOne(TokenType.window)) {
       do {
         final name = _consumeIdentifier('Expected a name for the window');
-        _consume(TokenType.as,
-            'Expected AS between the window name and its definition');
+        _consume(TokenType.as, 'Expected AS between the window name and its definition');
         final window = _windowDefinition();
 
         declarations.add(NamedWindowDeclaration(name.identifier, window));
@@ -1577,8 +1496,7 @@ class Parser {
       // terms).
       if (terms.length == 1 && terms.single is DartOrderingTermPlaceholder) {
         final termPlaceholder = terms.single as DartOrderingTermPlaceholder;
-        return DartOrderByPlaceholder(name: termPlaceholder.name)
-          ..setSpan(orderToken, termPlaceholder.last!);
+        return DartOrderByPlaceholder(name: termPlaceholder.name)..setSpan(orderToken, termPlaceholder.last!);
       }
 
       return OrderBy(terms: terms)..setSpan(orderToken, _previous);
@@ -1606,19 +1524,15 @@ class Parser {
     // placeholder, we can upgrade the expression to an ordering term
     // placeholder and let users define the mode at runtime.
     if (mode == null && nulls == null && expr is DartExpressionPlaceholder) {
-      return DartOrderingTermPlaceholder(name: expr.name)
-        ..setSpan(expr.first!, expr.last!);
+      return DartOrderingTermPlaceholder(name: expr.name)..setSpan(expr.first!, expr.last!);
     }
 
-    return OrderingTerm(expression: expr, orderingMode: mode, nulls: nulls)
-      ..setSpan(expr.first!, _previous);
+    return OrderingTerm(expression: expr, orderingMode: mode, nulls: nulls)..setSpan(expr.first!, _previous);
   }
 
   OrderingMode? _orderingModeOrNull() {
     if (_match(const [TokenType.asc, TokenType.desc])) {
-      final mode = _previous.type == TokenType.asc
-          ? OrderingMode.ascending
-          : OrderingMode.descending;
+      final mode = _previous.type == TokenType.asc ? OrderingMode.ascending : OrderingMode.descending;
       return mode;
     }
     return null;
@@ -1638,20 +1552,17 @@ class Parser {
     if (_matchOne(TokenType.comma)) {
       final separator = _previous;
       final count = expression();
-      return Limit(count: count, offsetSeparator: separator, offset: first)
-        ..setSpan(limitToken, _previous);
+      return Limit(count: count, offsetSeparator: separator, offset: first)..setSpan(limitToken, _previous);
     } else if (_matchOne(TokenType.offset)) {
       final separator = _previous;
       final offset = expression();
-      return Limit(count: first, offsetSeparator: separator, offset: offset)
-        ..setSpan(limitToken, _previous);
+      return Limit(count: first, offsetSeparator: separator, offset: offset)..setSpan(limitToken, _previous);
     } else {
       // no offset or comma was parsed (so just LIMIT $expr). In that case, we
       // want to provide additional flexibility to the user by interpreting the
       // expression as a whole limit clause.
       if (first is DartExpressionPlaceholder) {
-        return DartLimitPlaceholder(name: first.name)
-          ..setSpan(limitToken, _previous);
+        return DartLimitPlaceholder(name: first.name)..setSpan(limitToken, _previous);
       }
       return Limit(count: first)..setSpan(limitToken, _previous);
     }
@@ -1706,35 +1617,27 @@ class Parser {
 
   SingleColumnSetComponent _singleColumnSetComponent() {
     final columnName = _consumeIdentifier('Expected a column name to set');
-    final reference = Reference(columnName: columnName.identifier)
-      ..setSpan(columnName, columnName);
+    final reference = Reference(columnName: columnName.identifier)..setSpan(columnName, columnName);
     _consume(TokenType.equal, 'Expected = after the column name');
     final expr = expression();
 
-    return SingleColumnSetComponent(column: reference, expression: expr)
-      ..setSpan(columnName, _previous);
+    return SingleColumnSetComponent(column: reference, expression: expr)..setSpan(columnName, _previous);
   }
 
   MultiColumnSetComponent _multiColumnSetComponent() {
-    final first = _consume(
-        TokenType.leftParen, 'Expected opening parenthesis before column list');
+    final first = _consume(TokenType.leftParen, 'Expected opening parenthesis before column list');
 
     final targetColumns = <Reference>[];
     do {
       final columnName = _consumeIdentifier('Expected a column');
-      targetColumns.add(Reference(columnName: columnName.identifier)
-        ..setSpan(columnName, columnName));
+      targetColumns.add(Reference(columnName: columnName.identifier)..setSpan(columnName, columnName));
     } while (_matchOne(TokenType.comma));
 
-    _consume(
-        TokenType.rightParen, 'Expected closing parenthesis after column list');
+    _consume(TokenType.rightParen, 'Expected closing parenthesis after column list');
     _consume(TokenType.equal, 'Expected = after the column name list');
-    final tupleOrSubQuery =
-        _consumeTuple(orSubQuery: true, usedAsRowValue: true);
+    final tupleOrSubQuery = _consumeTuple(orSubQuery: true, usedAsRowValue: true);
 
-    return MultiColumnSetComponent(
-        columns: targetColumns, rowValue: tupleOrSubQuery)
-      ..setSpan(first, _previous);
+    return MultiColumnSetComponent(columns: targetColumns, rowValue: tupleOrSubQuery)..setSpan(first, _previous);
   }
 
   List<SetComponent> _setComponents() {
@@ -1788,12 +1691,10 @@ class Parser {
     if (_matchOne(TokenType.leftParen)) {
       do {
         final columnRef = _consumeIdentifier('Expected a column');
-        targetColumns.add(Reference(columnName: columnRef.identifier)
-          ..setSpan(columnRef, columnRef));
+        targetColumns.add(Reference(columnName: columnRef.identifier)..setSpan(columnRef, columnRef));
       } while (_matchOne(TokenType.comma));
 
-      _consume(TokenType.rightParen,
-          'Expected closing parenthesis after column list');
+      _consume(TokenType.rightParen, 'Expected closing parenthesis after column list');
     }
     final source = _insertSource();
     final upsert = <UpsertClauseEntry>[];
@@ -1808,10 +1709,7 @@ class Parser {
       table: table,
       targetColumns: targetColumns,
       source: source,
-      upsert: upsert.isEmpty
-          ? null
-          : (UpsertClause(upsert)
-            ..setSpan(upsert.first.first!, upsert.last.last!)),
+      upsert: upsert.isEmpty ? null : (UpsertClause(upsert)..setSpan(upsert.first.first!, upsert.last.last!)),
       returning: returning,
     )..setSpan(withClause?.first ?? firstToken, _previous);
   }
@@ -1830,8 +1728,7 @@ class Parser {
       final first = _previous;
       _consume(TokenType.$values, 'Expected DEFAULT VALUES');
       return DefaultValues()..setSpan(first, _previous);
-    } else if (enableDriftExtensions &&
-        _matchOne(TokenType.dollarSignVariable)) {
+    } else if (enableDriftExtensions && _matchOne(TokenType.dollarSignVariable)) {
       final token = _previous as DollarSignVariableToken;
       return DartInsertablePlaceholder(name: token.name)
         ..token = token
@@ -1859,8 +1756,7 @@ class Parser {
       }
     }
 
-    _consume(TokenType.$do,
-        'Expected DO, followed by the action (NOTHING or UPDATE SET)');
+    _consume(TokenType.$do, 'Expected DO, followed by the action (NOTHING or UPDATE SET)');
 
     late UpsertAction action;
     if (_matchOne(TokenType.nothing)) {
@@ -1933,11 +1829,7 @@ class Parser {
 
     final typeToken = _previous;
 
-    final frameType = const {
-      TokenType.range: FrameType.range,
-      TokenType.rows: FrameType.rows,
-      TokenType.groups: FrameType.groups
-    }[typeToken.type];
+    final frameType = const {TokenType.range: FrameType.range, TokenType.rows: FrameType.rows, TokenType.groups: FrameType.groups}[typeToken.type];
 
     FrameBoundary start, end;
 
@@ -1976,8 +1868,7 @@ class Parser {
     )..setSpan(typeToken, _previous);
   }
 
-  FrameBoundary _frameBoundary(
-      {bool isStartBounds = true, bool parseExprFollowing = true}) {
+  FrameBoundary _frameBoundary({bool isStartBounds = true, bool parseExprFollowing = true}) {
     // the CURRENT ROW boundary is supported for all modes
     if (_matchOne(TokenType.current)) {
       _consume(TokenType.row, 'Expected ROW to finish CURRENT ROW boundary');
@@ -2041,8 +1932,7 @@ class Parser {
 
       if (_matchOne(TokenType.dot)) {
         if (_matchOne(TokenType.star)) {
-          return StarResultColumn(identifier.identifier)
-            ..setSpan(identifier, _previous);
+          return StarResultColumn(identifier.identifier)..setSpan(identifier, _previous);
         } else if (enableDriftExtensions && _matchOne(TokenType.doubleStar)) {
           final as = _as();
 
@@ -2079,8 +1969,7 @@ class Parser {
       );
 
       final as = _as();
-      return NestedQueryColumn(select: statement, as: as?.identifier)
-        ..setSpan(list, _previous);
+      return NestedQueryColumn(select: statement, as: as?.identifier)..setSpan(list, _previous);
     }
 
     final tokenBefore = _peek;
@@ -2091,8 +1980,7 @@ class Parser {
       final mapped = _previous;
       _consume(TokenType.by, 'Expected `BY` to follow `MAPPED` here');
 
-      final dart = _consume(
-          TokenType.inlineDart, 'Expected Dart converter in backticks');
+      final dart = _consume(TokenType.inlineDart, 'Expected Dart converter in backticks');
       mappedBy = MappedBy(null, dart as InlineDartToken)..setSpan(mapped, dart);
     }
 
@@ -2118,8 +2006,7 @@ class Parser {
       return _createView();
     }
 
-    _error(
-        'Expected a TABLE, TRIGGER, INDEX or VIEW to be defined after the CREATE keyword.');
+    _error('Expected a TABLE, TRIGGER, INDEX or VIEW to be defined after the CREATE keyword.');
   }
 
   /// Parses a `CREATE TABLE` statement, assuming that the `CREATE` token has
@@ -2141,8 +2028,7 @@ class Parser {
     }
 
     // we don't currently support CREATE TABLE x AS SELECT ... statements
-    final leftParen = _consume(
-        TokenType.leftParen, 'Expected opening parenthesis to list columns');
+    final leftParen = _consume(TokenType.leftParen, 'Expected opening parenthesis to list columns');
 
     final columns = <ColumnDefinition>[];
     final tableConstraints = <TableConstraint>[];
@@ -2173,8 +2059,7 @@ class Parser {
       }
     } while (_matchOne(TokenType.comma));
 
-    final rightParen =
-        _consume(TokenType.rightParen, 'Expected closing parenthesis');
+    final rightParen = _consume(TokenType.rightParen, 'Expected closing parenthesis');
 
     var withoutRowId = false;
     var isStrict = false;
@@ -2188,8 +2073,7 @@ class Parser {
         strict = _previous;
         return true;
       } else if (_matchOne(TokenType.without)) {
-        _consume(TokenType.rowid,
-            'Expected ROWID to complete the WITHOUT ROWID part');
+        _consume(TokenType.rowid, 'Expected ROWID to complete the WITHOUT ROWID part');
         withoutRowId = true;
         return true;
       }
@@ -2236,8 +2120,7 @@ class Parser {
 
   /// Parses a `CREATE VIRTUAL TABLE` statement, after the `CREATE VIRTUAL TABLE
   /// <name>` tokens have already been read.
-  CreateVirtualTableStatement _virtualTable(
-      Token first, bool ifNotExists, IdentifierToken nameToken) {
+  CreateVirtualTableStatement _virtualTable(Token first, bool ifNotExists, IdentifierToken nameToken) {
     _consume(TokenType.using, 'Expected USING for virtual table declaration');
     final moduleName = _consumeIdentifier('Expected a module name');
     final args = <SourceSpanWithContext>[];
@@ -2260,8 +2143,7 @@ class Parser {
       for (;;) {
         // begin reading a single argument, which is stopped by a comma or
         // maybe with a ), if the current depth is one
-        while (_peek.type != TokenType.rightParen &&
-            _peek.type != TokenType.comma) {
+        while (_peek.type != TokenType.rightParen && _peek.type != TokenType.comma) {
           _advance();
           if (_previous.type == TokenType.leftParen) {
             levelOfParens++;
@@ -2305,8 +2187,7 @@ class Parser {
   }
 
   DriftTableName? _driftTableName({bool supportAs = true}) {
-    final types =
-        supportAs ? const [TokenType.as, TokenType.$with] : [TokenType.$with];
+    final types = supportAs ? const [TokenType.as, TokenType.$with] : [TokenType.$with];
 
     if (enableDriftExtensions && (_match(types))) {
       return _startedDriftTableName(_previous);
@@ -2316,14 +2197,11 @@ class Parser {
 
   DriftTableName _startedDriftTableName(Token first) {
     final useExisting = _previous.type == TokenType.$with;
-    final name =
-        _consumeIdentifier('Expected the name for the data class').identifier;
+    final name = _consumeIdentifier('Expected the name for the data class').identifier;
     String? constructorName;
 
     if (_matchOne(TokenType.dot)) {
-      constructorName = _consumeIdentifier(
-              'Expected name of the constructor to use after the dot')
-          .identifier;
+      constructorName = _consumeIdentifier('Expected name of the constructor to use after the dot').identifier;
     }
 
     return DriftTableName(
@@ -2366,15 +2244,13 @@ class Parser {
         ..insertToken = _previous
         ..setSpan(_previous, _previous);
     } else {
-      final updateToken = _consume(
-          TokenType.update, 'Expected DELETE, INSERT or UPDATE as a trigger');
+      final updateToken = _consume(TokenType.update, 'Expected DELETE, INSERT or UPDATE as a trigger');
       final names = <Reference>[];
 
       if (_matchOne(TokenType.of)) {
         do {
           final name = _consumeIdentifier('Expected column name in ON clause');
-          final reference = Reference(columnName: name.identifier)
-            ..setSpan(name, name);
+          final reference = Reference(columnName: name.identifier)..setSpan(name, name);
           names.add(reference);
         } while (_matchOne(TokenType.comma));
       }
@@ -2387,8 +2263,7 @@ class Parser {
     _consume(TokenType.on, 'Expected ON');
     _suggestHint(const TableNameDescription());
     final nameToken = _consumeIdentifier('Expected a table name');
-    final tableRef = TableReference(nameToken.identifier)
-      ..setSpan(nameToken, nameToken);
+    final tableRef = TableReference(nameToken.identifier)..setSpan(nameToken, nameToken);
 
     if (_matchOne(TokenType.$for)) {
       const msg = 'Expected FOR EACH ROW';
@@ -2486,8 +2361,7 @@ class Parser {
     _consume(TokenType.on, 'Expected ON table');
     _suggestHint(const TableNameDescription());
     final nameToken = _consumeIdentifier('Expected a table name');
-    final tableRef = TableReference(nameToken.identifier)
-      ..setSpan(nameToken, nameToken);
+    final tableRef = TableReference(nameToken.identifier)..setSpan(nameToken, nameToken);
 
     _consume(TokenType.leftParen, 'Expected indexed columns in parentheses');
 
@@ -2586,17 +2460,12 @@ class Parser {
     if (_matchOne(TokenType.leftParen)) {
       typeNames.add(_previous);
 
-      const inBrackets = [
-        TokenType.identifier,
-        TokenType.comma,
-        TokenType.numberLiteral
-      ];
+      const inBrackets = [TokenType.identifier, TokenType.comma, TokenType.numberLiteral];
       while (_match(inBrackets)) {
         typeNames.add(_previous);
       }
 
-      _consume(TokenType.rightParen,
-          'Expected closing parenthesis to finish type name');
+      _consume(TokenType.rightParen, 'Expected closing parenthesis to finish type name');
       typeNames.add(_previous);
     }
 
@@ -2618,21 +2487,17 @@ class Parser {
       _suggestHint(HintDescription.token(TokenType.autoincrement));
       final hasAutoInc = _matchOne(TokenType.autoincrement);
 
-      return PrimaryKeyColumn(resolvedName,
-          autoIncrement: hasAutoInc, mode: mode, onConflict: conflict)
-        ..setSpan(first, _previous);
+      return PrimaryKeyColumn(resolvedName, autoIncrement: hasAutoInc, mode: mode, onConflict: conflict)..setSpan(first, _previous);
     }
     if (_matchOne(TokenType.$null)) {
       final nullToken = _previous;
-      return NullColumnConstraint(resolvedName, $null: nullToken)
-        ..setSpan(nullToken, nullToken);
+      return NullColumnConstraint(resolvedName, $null: nullToken)..setSpan(nullToken, nullToken);
     }
     if (_matchOne(TokenType.not)) {
       _suggestHint(HintDescription.token(TokenType.$null));
 
       final notToken = _previous;
-      final nullToken =
-          _consume(TokenType.$null, 'Expected NULL to complete NOT NULL');
+      final nullToken = _consume(TokenType.$null, 'Expected NULL to complete NOT NULL');
 
       return NotNull(resolvedName, onConflict: _conflictClauseOrNull())
         ..setSpan(first, _previous)
@@ -2640,8 +2505,7 @@ class Parser {
         ..$null = nullToken;
     }
     if (_matchOne(TokenType.unique)) {
-      return UniqueColumn(resolvedName, _conflictClauseOrNull())
-        ..setSpan(first, _previous);
+      return UniqueColumn(resolvedName, _conflictClauseOrNull())..setSpan(first, _previous);
     }
     if (_matchOne(TokenType.check)) {
       final expr = _expressionInParentheses();
@@ -2653,8 +2517,7 @@ class Parser {
       if (_match(const [TokenType.plus, TokenType.minus])) {
         // Signed number
         final operator = _previous;
-        expr = UnaryExpression(operator, _numericLiteral())
-          ..setSpan(operator, _previous);
+        expr = UnaryExpression(operator, _numericLiteral())..setSpan(operator, _previous);
       } else {
         // Literal or an expression in parentheses
         expr = _literalOrNull() ?? _expressionInParentheses();
@@ -2665,8 +2528,7 @@ class Parser {
     if (_matchOne(TokenType.collate)) {
       final collation = _consumeIdentifier('Expected the collation name');
 
-      return CollateConstraint(resolvedName, collation.identifier)
-        ..setSpan(first, _previous);
+      return CollateConstraint(resolvedName, collation.identifier)..setSpan(first, _previous);
     }
     if (_matchOne(TokenType.generated)) {
       _consume(TokenType.always);
@@ -2685,28 +2547,23 @@ class Parser {
         isStored = false;
       }
 
-      return GeneratedAs(expr, name: resolvedName, stored: isStored)
-        ..setSpan(first, _previous);
+      return GeneratedAs(expr, name: resolvedName, stored: isStored)..setSpan(first, _previous);
     }
     if (_peek.type == TokenType.references) {
       final clause = _foreignKeyClause();
-      return ForeignKeyColumnConstraint(resolvedName, clause)
-        ..setSpan(first, _previous);
+      return ForeignKeyColumnConstraint(resolvedName, clause)..setSpan(first, _previous);
     }
 
     if (enableDriftExtensions && _matchOne(TokenType.mapped)) {
       _consume(TokenType.by, 'Expected a MAPPED BY constraint');
 
-      final dartExpr = _consume(
-          TokenType.inlineDart, 'Expected Dart expression in backticks');
+      final dartExpr = _consume(TokenType.inlineDart, 'Expected Dart expression in backticks');
 
-      return MappedBy(resolvedName, dartExpr as InlineDartToken)
-        ..setSpan(first, _previous);
+      return MappedBy(resolvedName, dartExpr as InlineDartToken)..setSpan(first, _previous);
     }
     if (enableDriftExtensions && _matchOne(TokenType.json)) {
       final jsonToken = _previous;
-      final keyToken =
-          _consume(TokenType.key, 'Expected a JSON KEY constraint');
+      final keyToken = _consume(TokenType.key, 'Expected a JSON KEY constraint');
       final name = _consumeIdentifier('Expected a name for for the json key');
 
       return JsonKey(resolvedName, name)
@@ -2745,17 +2602,12 @@ class Parser {
         _consume(TokenType.key, 'Expected KEY to start PRIMARY KEY clause');
       }
 
-      _consume(TokenType.leftParen,
-          'Expected a left parenthesis to start key columns');
+      _consume(TokenType.leftParen, 'Expected a left parenthesis to start key columns');
       final columns = _indexedColumns();
-      _consume(
-          TokenType.rightParen, 'Expected a closing parenthesis after columns');
+      _consume(TokenType.rightParen, 'Expected a closing parenthesis after columns');
       final conflictClause = _conflictClauseOrNull();
 
-      result = KeyClause(name,
-          isPrimaryKey: isPrimaryKey,
-          columns: columns,
-          onConflict: conflictClause);
+      result = KeyClause(name, isPrimaryKey: isPrimaryKey, columns: columns, onConflict: conflictClause);
     } else if (_matchOne(TokenType.check)) {
       final expr = _expressionInParentheses();
       result = CheckTable(name, expr);
@@ -2764,8 +2616,7 @@ class Parser {
       final columns = _listColumnsInParentheses(allowEmpty: false);
       final clause = _foreignKeyClause();
 
-      result =
-          ForeignKeyTableConstraint(name, columns: columns, clause: clause);
+      result = ForeignKeyTableConstraint(name, columns: columns, clause: clause);
     }
 
     if (result != null) {
@@ -2801,8 +2652,7 @@ class Parser {
   ConflictClause? _conflictClauseOrNull() {
     _suggestHint(HintDescription.token(TokenType.on));
     if (_matchOne(TokenType.on)) {
-      _consume(TokenType.conflict,
-          'Expected CONFLICT to complete ON CONFLICT clause');
+      _consume(TokenType.conflict, 'Expected CONFLICT to complete ON CONFLICT clause');
 
       const modes = {
         TokenType.rollback: ConflictClause.rollback,
@@ -2860,8 +2710,7 @@ class Parser {
 
     _suggestHint(HintDescription.token(TokenType.on));
     while (_matchOne(TokenType.on)) {
-      _suggestHint(
-          const HintDescription.tokens([TokenType.delete, TokenType.update]));
+      _suggestHint(const HintDescription.tokens([TokenType.delete, TokenType.update]));
       if (_matchOne(TokenType.delete)) {
         onDelete = _referenceAction();
       } else if (_matchOne(TokenType.update)) {
@@ -2887,8 +2736,7 @@ class Parser {
         }
       }
 
-      deferrable = DeferrableClause(not != null, mode)
-        ..setSpan(not ?? deferrableToken, _previous);
+      deferrable = DeferrableClause(not != null, mode)..setSpan(not ?? deferrableToken, _previous);
     }
 
     return ForeignKeyClause(
@@ -2926,13 +2774,11 @@ class Parser {
     if (_matchOne(TokenType.leftParen)) {
       do {
         final referenceId = _consumeIdentifier('Expected a column name');
-        final reference = Reference(columnName: referenceId.identifier)
-          ..setSpan(referenceId, referenceId);
+        final reference = Reference(columnName: referenceId.identifier)..setSpan(referenceId, referenceId);
         columnNames.add(reference);
       } while (_matchOne(TokenType.comma));
 
-      _consume(TokenType.rightParen,
-          'Expected closing paranthesis after column names');
+      _consume(TokenType.rightParen, 'Expected closing paranthesis after column names');
     } else {
       if (!allowEmpty) {
         _error('Expected a list of columns in parantheses');

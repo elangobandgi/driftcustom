@@ -12,22 +12,18 @@ void _enforceFrom(SelectStatement stmt, Queryable expected) {
 void main() {
   group('from', () {
     test('a simple table', () {
-      final stmt =
-          SqlEngine().parse('SELECT * FROM tbl').rootNode as SelectStatement;
+      final stmt = SqlEngine().parse('SELECT * FROM tbl').rootNode as SelectStatement;
 
       _enforceFrom(stmt, TableReference('tbl'));
     });
 
     test('schema name and alias', () {
-      final stmt = SqlEngine().parse('SELECT * FROM main.tbl foo').rootNode
-          as SelectStatement;
+      final stmt = SqlEngine().parse('SELECT * FROM main.tbl foo').rootNode as SelectStatement;
       _enforceFrom(stmt, TableReference('tbl', schemaName: 'main', as: 'foo'));
     });
 
     test('from more than one table', () {
-      final stmt = SqlEngine()
-          .parse('SELECT * FROM tbl AS test, table2')
-          .rootNode as SelectStatement;
+      final stmt = SqlEngine().parse('SELECT * FROM tbl AS test, table2').rootNode as SelectStatement;
 
       _enforceFrom(
         stmt,
@@ -44,9 +40,7 @@ void main() {
     });
 
     test('more than one table with ON constraint', () {
-      final stmt = SqlEngine()
-          .parse('SELECT * FROM tbl AS test, table2 ON TRUE')
-          .rootNode as SelectStatement;
+      final stmt = SqlEngine().parse('SELECT * FROM tbl AS test, table2 ON TRUE').rootNode as SelectStatement;
 
       _enforceFrom(
         stmt,
@@ -66,10 +60,7 @@ void main() {
     });
 
     test('inner select statements', () {
-      final stmt = SqlEngine()
-          .parse(
-              'SELECT * FROM table1, (SELECT * FROM table2 WHERE a) as "inner"')
-          .rootNode as SelectStatement;
+      final stmt = SqlEngine().parse('SELECT * FROM table1, (SELECT * FROM table2 WHERE a) as "inner"').rootNode as SelectStatement;
 
       _enforceFrom(
         stmt,
@@ -165,7 +156,7 @@ WHERE json_each.value LIKE '704-%';
           distinct: true,
           columns: [
             ExpressionResultColumn(
-              expression: Reference(entityName: 'user', columnName: 'name'),
+              expression: Reference(entityColName: 'user', columnName: 'name'),
             ),
           ],
           from: JoinClause(
@@ -175,15 +166,13 @@ WHERE json_each.value LIKE '704-%';
                 operator: JoinOperator.comma(),
                 query: TableValuedFunction(
                   'json_each',
-                  ExprFunctionParameters(parameters: [
-                    Reference(entityName: 'user', columnName: 'phone')
-                  ]),
+                  ExprFunctionParameters(parameters: [Reference(entityColName: 'user', columnName: 'phone')]),
                 ),
               ),
             ],
           ),
           where: StringComparisonExpression(
-            left: Reference(entityName: 'json_each', columnName: 'value'),
+            left: Reference(entityColName: 'json_each', columnName: 'value'),
             operator: token(TokenType.like),
             right: StringLiteral('704-%'),
           ),
@@ -204,9 +193,7 @@ WHERE json_each.value LIKE '704-%';
       testStatement(
         'SELECT * FROM foo, bar',
         selectWith(
-          JoinClause(primary: TableReference('foo'), joins: [
-            Join(operator: JoinOperator.comma(), query: TableReference('bar'))
-          ]),
+          JoinClause(primary: TableReference('foo'), joins: [Join(operator: JoinOperator.comma(), query: TableReference('bar'))]),
         ),
       );
     });
@@ -215,11 +202,7 @@ WHERE json_each.value LIKE '704-%';
       testStatement(
         'SELECT * FROM foo JOIN bar',
         selectWith(
-          JoinClause(primary: TableReference('foo'), joins: [
-            Join(
-                operator: JoinOperator(JoinOperatorKind.none),
-                query: TableReference('bar'))
-          ]),
+          JoinClause(primary: TableReference('foo'), joins: [Join(operator: JoinOperator(JoinOperatorKind.none), query: TableReference('bar'))]),
         ),
       );
     });
@@ -228,11 +211,7 @@ WHERE json_each.value LIKE '704-%';
       testStatement(
         'SELECT * FROM foo NATURAL JOIN bar',
         selectWith(
-          JoinClause(primary: TableReference('foo'), joins: [
-            Join(
-                operator: JoinOperator(JoinOperatorKind.none, natural: true),
-                query: TableReference('bar'))
-          ]),
+          JoinClause(primary: TableReference('foo'), joins: [Join(operator: JoinOperator(JoinOperatorKind.none, natural: true), query: TableReference('bar'))]),
         ),
       );
     });
@@ -241,11 +220,7 @@ WHERE json_each.value LIKE '704-%';
       testStatement(
         'SELECT * FROM foo CROSS JOIN bar',
         selectWith(
-          JoinClause(primary: TableReference('foo'), joins: [
-            Join(
-                operator: JoinOperator(JoinOperatorKind.cross),
-                query: TableReference('bar'))
-          ]),
+          JoinClause(primary: TableReference('foo'), joins: [Join(operator: JoinOperator(JoinOperatorKind.cross), query: TableReference('bar'))]),
         ),
       );
     });
@@ -309,13 +284,11 @@ WHERE json_each.value LIKE '704-%';
     });
 
     test('does not allow natural with cross', () {
-      expectParseError('SELECT * FROM foo NATURAL CROSS JOIN bar',
-          span: 'CROSS');
+      expectParseError('SELECT * FROM foo NATURAL CROSS JOIN bar', span: 'CROSS');
     });
 
     test('does not allow INNER OUTER', () {
-      expectParseError('SELECT * FROM foo INNER OUTER CROSS JOIN bar',
-          span: 'OUTER');
+      expectParseError('SELECT * FROM foo INNER OUTER CROSS JOIN bar', span: 'OUTER');
     });
   });
 }

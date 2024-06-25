@@ -27,9 +27,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
   @override
   void visitBinaryExpression(BinaryExpression e, void arg) {
     final operator = e.operator.type;
-    if ((operator == TokenType.dashRangle ||
-            operator == TokenType.dashRangleRangle) &&
-        options.version < SqliteVersion.v3_38) {
+    if ((operator == TokenType.dashRangle || operator == TokenType.dashRangleRangle) && options.version < SqliteVersion.v3_38) {
       context.reportError(AnalysisError(
         type: AnalysisErrorType.notSupportedInDesiredVersion,
         message: '`->` and `->>` require sqlite3 version 38',
@@ -42,8 +40,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
 
   @override
   void visitCommonTableExpression(CommonTableExpression e, void arg) {
-    if (e.materializationHint != null &&
-        options.version < SqliteVersion.v3_35) {
+    if (e.materializationHint != null && options.version < SqliteVersion.v3_35) {
       context.reportError(AnalysisError(
         type: AnalysisErrorType.notSupportedInDesiredVersion,
         message: 'MATERIALIZED / NOT MATERIALIZED requires sqlite3 version 35',
@@ -56,8 +53,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
 
   @override
   void visitCreateTableStatement(CreateTableStatement e, void arg) {
-    final schemaReader =
-        SchemaFromCreateTable(driftExtensions: options.useDriftExtensions);
+    final schemaReader = SchemaFromCreateTable(driftExtensions: options.useDriftExtensions);
     var hasNonGeneratedColumn = false;
     var hasPrimaryKeyDeclaration = false;
     var isStrict = false;
@@ -234,8 +230,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
           ));
         }
       case TableOrSubquery table:
-        final columns =
-            table.availableResultSet?.resultSet.resultSet?.resolvedColumns;
+        final columns = table.availableResultSet?.resultSet.resultSet?.resolvedColumns;
         if (columns != null && columns.length != expectedColumns) {
           context.reportError(AnalysisError(
             type: AnalysisErrorType.other,
@@ -254,14 +249,11 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
     if (e.distinctFromSyntax && options.version < SqliteVersion.v3_39) {
       // `IS NOT DISTINCT FROM` is the same thing as `IS`
       final alternative = e.negated ? 'IS' : 'IS NOT';
-      final source = (e.distinct != null && e.from != null)
-          ? [e.distinct!, e.from!].toSingleEntity
-          : e;
+      final source = (e.distinct != null && e.from != null) ? [e.distinct!, e.from!].toSingleEntity : e;
 
       context.reportError(AnalysisError(
         type: AnalysisErrorType.notSupportedInDesiredVersion,
-        message:
-            '`DISTINCT FROM` requires sqlite 3.39, try using `$alternative`',
+        message: '`DISTINCT FROM` requires sqlite 3.39, try using `$alternative`',
         relevantNode: source,
       ));
     }
@@ -349,9 +341,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
 
   @override
   void visitJoinOperator(JoinOperator e, void arg) {
-    if ((e.operator == JoinOperatorKind.right ||
-            e.operator == JoinOperatorKind.full) &&
-        options.version < SqliteVersion.v3_39) {
+    if ((e.operator == JoinOperatorKind.right || e.operator == JoinOperatorKind.full) && options.version < SqliteVersion.v3_39) {
       context.reportError(
         AnalysisError(
           type: AnalysisErrorType.notSupportedInDesiredVersion,
@@ -465,24 +455,19 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
       _checkForGeneratedColumn(column);
     }
 
-    if (e.rowValue is Tuple &&
-        e.columns.length != (e.rowValue as Tuple).expressions.length) {
+    if (e.rowValue is Tuple && e.columns.length != (e.rowValue as Tuple).expressions.length) {
       context.reportError(
         AnalysisError(
           type: AnalysisErrorType.cteColumnCountMismatch,
-          message:
-              'Length of column-name-list must match length of row values.',
+          message: 'Length of column-name-list must match length of row values.',
           relevantNode: e.rowValue,
         ),
       );
-    } else if (e.rowValue is SubQuery &&
-        e.columns.length !=
-            (e.rowValue as SubQuery).select.resolvedColumns?.length) {
+    } else if (e.rowValue is SubQuery && e.columns.length != (e.rowValue as SubQuery).select.resolvedColumns?.length) {
       context.reportError(
         AnalysisError(
           type: AnalysisErrorType.cteColumnCountMismatch,
-          message:
-              'Length of column-name-list must match length of columns returned by SubQuery.',
+          message: 'Length of column-name-list must match length of columns returned by SubQuery.',
           relevantNode: e.rowValue,
         ),
       );
@@ -497,7 +482,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
       // Primary key clauses may only include simple columns
       for (final column in e.columns) {
         final expr = column.expression;
-        if (expr is! Reference || expr.entityName != null) {
+        if (expr is! Reference || expr.entityColName != null) {
           context.reportError(AnalysisError(
             type: AnalysisErrorType.synctactic,
             message: 'Only column names can be used in a PRIMARY KEY clause',
@@ -519,8 +504,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
       if (_isInTopLevelTriggerStatement && e.as != null) {
         context.reportError(AnalysisError(
           type: AnalysisErrorType.synctactic,
-          message:
-              'The source must not have an `AS` alias when used in a trigger.',
+          message: 'The source must not have an `AS` alias when used in a trigger.',
           relevantNode: e,
         ));
       }
@@ -568,10 +552,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
       if (parent.base == null) {
         isAllowed = false;
       } else {
-        final comparisons = <Expression?>[
-          parent.base,
-          for (final branch in parent.whens) branch.when
-        ];
+        final comparisons = <Expression?>[parent.base, for (final branch in parent.whens) branch.when];
 
         isAllowed = !comparisons.any((e) => !isRowValue(e));
       }
@@ -600,8 +581,7 @@ class LintingVisitor extends RecursiveVisitor<void, void> {
       context.reportError(AnalysisError(
         type: AnalysisErrorType.notSupportedInDesiredVersion,
         relevantNode: e,
-        message:
-            'Multiple on conflict clauses require sqlite version 3.35 or later',
+        message: 'Multiple on conflict clauses require sqlite version 3.35 or later',
       ));
     }
 
